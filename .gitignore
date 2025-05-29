@@ -1,0 +1,56 @@
+# Node modules
+node_modules/
+
+# Build output
+build/
+dist/
+
+# Local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Testing
+coverage/
+*.lcov
+
+# Misc
+*.tgz
+.cache/
+.parcel-cache/
+.next/
+out/
+temp/
+.tmp/
+*.bak
+
+# React Native
+.expo/
+.expo-shared/
+
+# ESLint/Prettier
+.eslintcache
+
+# Optional - if using Docker
+docker-compose.override.yml
+
+# Optional - if using Storybook
+storybook-static/

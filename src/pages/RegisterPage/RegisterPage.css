@@ -1,0 +1,116 @@
+/* src/pages/RegisterPage/RegisterPage.css */
+
+.register-page-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 64px); /* Ajuste conforme header */
+    background-color: var(--bg-secondary, #f0f2f5); /* Fallback se variáveis não carregarem */
+    padding: 20px;
+    padding-top: 40px; /* Mais espaço no topo */
+    padding-bottom: 40px; /* Mais espaço abaixo */
+}
+
+.register-row {
+    width: 100%;
+}
+
+.register-card {
+    padding: 30px 24px 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    background-color: var(--bg-card, #ffffff);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.register-card-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.register-icon-header {
+    font-size: 3em;
+    color: var(--link-color, #1890ff);
+    margin-bottom: 16px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.register-title {
+    color: var(--text-primary, #333) !important;
+    margin-bottom: 8px !important;
+    font-weight: 600 !important;
+}
+
+.register-card-header .ant-typography-secondary {
+    color: var(--text-secondary, #777) !important;
+}
+
+.register-form .ant-form-item {
+    margin-bottom: 18px; /* Menos espaço que no login, mais campos */
+}
+.register-form .ant-form-item-label > label {
+    color: var(--text-primary, #555); /* Cor do label */
+}
+
+
+.register-form .ant-input-affix-wrapper,
+.register-form .ant-input-password,
+.register-form .ant-input { /* Adicionado .ant-input para o nome */
+    border-radius: 6px;
+}
+
+.register-form .ant-input-prefix .anticon {
+    color: var(--text-light, #aaa);
+}
+
+.dark-theme .register-form .ant-input::placeholder {
+    color: var(--text-light, #bbb) !important;
+}
+
+.register-form-button {
+    border-radius: 6px;
+    height: 42px !important;
+    font-size: 1.05em;
+    margin-top: 10px; /* Espaço acima do botão */
+}
+.register-form-button .ant-spin {
+    color: #fff;
+}
+.dark-theme .register-form-button .ant-spin {
+    color: var(--text-primary, #333);
+}
+
+.register-form-login {
+    text-align: center;
+    margin-top: 20px;
+    color: var(--text-secondary, #777);
+}
+.register-form-login a {
+    font-weight: 500;
+    color: var(--link-color, #1890ff);
+}
+.register-form-login a:hover {
+    color: var(--link-hover-color, #096dd9);
+}
+
+.register-page-footer-text {
+    display: block;
+    text-align: center;
+    margin-top: 24px;
+    color: var(--text-light, #aaa);
+    font-size: 0.85em;
+}
+
+@media (max-width: 576px) {
+    .register-card {
+        padding: 20px 16px 24px;
+        box-shadow: none;
+        border-radius: 0;
+    }
+    .register-page-content {
+        align-items: flex-start;
+        padding-top: 20px;
+    }
+}

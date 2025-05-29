@@ -1,0 +1,345 @@
+/* src/components/Header/Header.css */
+
+/* --- Estilos Globais do Header --- */
+.app-header.modern-header {
+  background-color: #ffffff;
+  padding: 0 24px;
+  border-bottom: 1px solid #f0f0f0;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  height: 64px;
+  transition: box-shadow 0.3s ease;
+}
+
+.header-content-row {
+  height: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* --- Logo --- */
+.logo.modern-logo {
+  font-size: 1.6em;
+  font-weight: 700;
+  line-height: 64px;
+  margin-left: 10px;
+  white-space: nowrap;
+}
+.logo.modern-logo a { /* Estilo para o Link do logo */
+  color: #262626;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+.logo.modern-logo a:hover {
+  color: #1890ff; /* Azul Antd no hover */
+}
+
+
+/* --- Barra de Pesquisa --- */
+.header-search {
+  width: 250px;
+  vertical-align: middle;
+}
+.header-search .ant-input {
+  border-radius: 18px 0 0 18px;
+  border-right: none;
+}
+.header-search .ant-input-search-button {
+  border-radius: 0 18px 18px 0 !important;
+  border-left-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* --- Menu Desktop --- */
+.header-center {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.header-menu.modern-menu {
+  background: transparent;
+  border-bottom: none;
+  line-height: 62px; /* Ajusta para alinhar bem com 64px de altura do header */
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+/* Estilo Base dos Itens do Menu (Desktop) */
+.modern-header .modern-menu .ant-menu-item,
+.modern-header .modern-menu .ant-menu-submenu-title,
+.modern-header .modern-menu .category-dropdown-trigger { /* Inclui o trigger do dropdown */
+  color: #595959;
+  font-weight: 500;
+  margin: 0 5px;
+  padding: 0 15px !important;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  top: 0 !important;
+  display: inline-flex; /* Para alinhar ícone com texto no dropdown trigger */
+  align-items: center;
+}
+.modern-header .modern-menu .category-dropdown-trigger .anticon-down {
+    margin-left: 6px; /* Espaço para o ícone de seta */
+    font-size: 0.8em; /* Ícone um pouco menor */
+}
+
+
+/* Remove a linha indicadora padrão do Ant Design */
+.modern-header .modern-menu > .ant-menu-item::after,
+.modern-header .modern-menu > .ant-menu-submenu::after {
+  display: none !important;
+  border-bottom: none !important;
+}
+
+/* Efeito "Flutuar" (Hover) - Fundo sutil */
+.modern-header .modern-menu .ant-menu-item:hover,
+.modern-header .modern-menu .ant-menu-submenu-title:hover,
+.modern-header .modern-menu .category-dropdown-trigger:hover { /* Inclui o trigger do dropdown */
+  color: #000000;
+  background-color: #f5f5f5;
+}
+
+/* Estilo Item Ativo/Selecionado (Desktop) */
+.modern-header .modern-menu .ant-menu-item-selected,
+.modern-header .modern-menu .ant-menu-item-selected .category-dropdown-trigger { /* Garante que o trigger também pareça ativo */
+  color: #000000 !important;
+  background-color: #eeeeee !important;
+  font-weight: 600;
+}
+/* Se o dropdown estiver aberto e o item "Categorias" estiver selecionado */
+.modern-header .modern-menu .ant-menu-item-selected.ant-dropdown-open .category-dropdown-trigger {
+    background-color: #e6f7ff !important; /* Cor de fundo quando dropdown está aberto (opcional) */
+}
+
+
+/* Estilização do Overlay/Popup do Dropdown de Categorias */
+.category-dropdown-overlay .ant-dropdown-menu {
+  border-radius: 6px;
+  box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08),
+              0 3px 6px -4px rgba(0, 0, 0, 0.12),
+              0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  padding: 4px 0; /* Padding interno do menu dropdown */
+}
+.category-dropdown-overlay .ant-dropdown-menu-item {
+  padding: 8px 12px; /* Padding para os itens do dropdown */
+  border-radius: 4px;
+  margin: 2px 4px; /* Pequena margem entre os itens */
+}
+.category-dropdown-overlay .ant-dropdown-menu-item a {
+  color: #333;
+  text-decoration: none;
+}
+.category-dropdown-overlay .ant-dropdown-menu-item:hover {
+  background-color: #f0f5ff; /* Azul bem claro no hover */
+  color: #1890ff; /* Azul Antd no hover */
+}
+.category-dropdown-overlay .ant-dropdown-menu-item:hover a {
+  color: #1890ff;
+}
+
+
+/* --- Botão Hamburguer (Mobile) --- */
+.menu-toggle-button {
+  display: none;
+  font-size: 20px;
+  color: #262626;
+  margin-right: 10px;
+}
+.menu-toggle-button:hover {
+    background-color: #f0f0f0 !important;
+}
+
+/* --- Drawer (Menu Mobile) --- */
+.mobile-drawer .ant-drawer-title a.drawer-title-link { /* Estilo para o título do Drawer como link */
+    color: inherit; /* Herda a cor padrão do título */
+    text-decoration: none;
+}
+.mobile-drawer .ant-drawer-title a.drawer-title-link:hover {
+    color: #1890ff; /* Azul no hover */
+}
+
+
+.mobile-drawer .drawer-logo {
+  padding: 16px 24px;
+  font-size: 1.4em;
+  font-weight: 700;
+  border-bottom: 1px solid #f0f0f0;
+}
+.mobile-drawer .drawer-logo a {
+  color: #262626;
+  text-decoration: none;
+}
+.mobile-drawer .drawer-search {
+  padding: 16px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.mobile-drawer .drawer-search .ant-input-search-button {
+     border-radius: 0 6px 6px 0 !important;
+}
+.mobile-drawer .drawer-search .ant-input {
+     border-radius: 6px 0 0 6px;
+}
+
+.mobile-drawer .drawer-menu.ant-menu {
+  border-right: none;
+}
+
+.mobile-drawer .drawer-menu .ant-menu-item,
+.mobile-drawer .drawer-menu .ant-menu-submenu-title { /* Inclui o título do submenu de categorias */
+  margin: 4px 0;
+  width: calc(100% - 16px);
+  margin-left: 8px;
+  border-radius: 6px;
+}
+.mobile-drawer .drawer-menu .ant-menu-item-selected,
+.mobile-drawer .drawer-menu .ant-menu-submenu-selected .ant-menu-submenu-title { /* Submenu ativo */
+    background-color: #e6f7ff !important;
+    color: #1890ff !important;
+    font-weight: 600;
+}
+.mobile-drawer .drawer-menu .ant-menu-item-selected a,
+.mobile-drawer .drawer-menu .ant-menu-submenu-selected .ant-menu-submenu-title a {
+    color: #1890ff !important;
+}
+/* Estilo para itens dentro do submenu de categorias no Drawer */
+.mobile-drawer .drawer-menu .ant-menu-sub .ant-menu-item {
+    background-color: transparent !important; /* Remove fundo azul do item pai */
+    padding-left: 48px !important; /* Indentação para itens do submenu */
+}
+.mobile-drawer .drawer-menu .ant-menu-sub .ant-menu-item-selected {
+    background-color: #dcf4ff !important; /* Fundo um pouco diferente para item de categoria selecionado */
+}
+
+
+/* --- Responsividade --- */
+@media (max-width: 992px) {
+  .app-header.modern-header { padding: 0 16px; }
+  .header-search { width: 200px; }
+  .modern-header .modern-menu .ant-menu-item,
+  .modern-header .modern-menu .ant-menu-submenu-title,
+  .modern-header .modern-menu .category-dropdown-trigger {
+    padding: 0 10px !important;
+    margin: 0 2px;
+  }
+  .logo.modern-logo { font-size: 1.4em; }
+}
+
+@media (max-width: 768px) {
+   .header-left { flex: 1; display: flex; align-items: center; }
+  .header-center { display: none; }
+  .menu-toggle-button { display: inline-block; }
+  .logo.modern-logo { margin-left: 5px; font-size: 1.3em; }
+  .header-search { width: 150px; }
+  .header-content-row { justify-content: space-between; }
+}
+
+@media (max-width: 480px) {
+   .app-header.modern-header { padding: 0 12px; }
+   .logo.modern-logo { font-size: 1.2em; }
+   .header-search { width: 120px; }
+}
+
+
+/* src/components/Header/Header.css */
+
+/* ... (estilos anteriores do header-menu, logo, etc. mantidos) ... */
+
+/* --- Seção Direita Combinada (User Actions & Search) --- */
+.header-right-combined {
+  display: flex;
+  align-items: center;
+}
+
+.user-actions-and-search {
+  /* O Space do AntD já cuida do espaçamento interno */
+}
+
+/* Estilos para os botões de login/cadastro/logout no header */
+.user-greeting-text {
+  color: #595959;
+  margin-right: 8px !important; /* Adiciona um pouco de margem ao lado do texto de saudação */
+  white-space: nowrap;
+}
+
+.login-button-header,
+.register-button-header,
+.dashboard-button-header,
+.logout-button-header {
+  padding-left: 12px !important; /* Mais padding para botões com ícone */
+  padding-right: 12px !important;
+}
+
+/* Ajuste para botão de logout (ícone apenas em telas menores talvez) */
+.logout-button-header .anticon + span {
+  /* margin-left: 6px; */ /* Espaço entre ícone e texto (se houver) */
+}
+
+.header-search-standalone {
+  width: 200px; /* Ajuste a largura conforme necessário */
+  vertical-align: middle;
+}
+.header-search-standalone .ant-input {
+  border-radius: 18px 0 0 18px;
+  border-right: none;
+}
+.header-search-standalone .ant-input-search-button {
+  border-radius: 0 18px 18px 0 !important;
+  border-left-color: transparent !important;
+  box-shadow: none !important;
+}
+
+
+/* --- Responsividade para a nova seção direita --- */
+@media (max-width: 992px) {
+  .header-search-standalone { width: 180px; }
+  .user-greeting-text { display: none; } /* Esconde saudação em telas menores para economizar espaço */
+  .login-button-header, .register-button-header, .dashboard-button-header {
+    /* Pode-se optar por mostrar só o ícone */
+    /* padding: 0 8px !important; */
+  }
+  .login-button-header span, .register-button-header span, .dashboard-button-header span {
+    /* display: none; */ /* Se quiser só ícone */
+  }
+  .logout-button-header .anticon + span {
+     /* display: none; */ /* Mostra só o ícone de logout */
+  }
+}
+
+@media (max-width: 768px) {
+  .header-left { flex: 1; display: flex; align-items: center; }
+  .header-center { display: none; } /* Menu desktop some */
+  .header-right-combined {
+    /* No mobile, a busca e user actions podem ir para o drawer,
+       ou a busca pode ficar menor e as user actions somem do header principal */
+    /* Para manter simples, vamos esconder as user actions e manter a busca */
+  }
+  .user-actions-and-search .ant-space-item:not(:last-child) { /* Esconde botões de login/user */
+    display: none;
+  }
+  .header-search-standalone {
+    width: 150px;
+  }
+  /* O menu-toggle-button já está configurado para aparecer */
+}
+
+@media (max-width: 480px) {
+   .app-header.modern-header { padding: 0 12px; }
+   .logo.modern-logo { font-size: 1.2em; }
+   .header-search-standalone { width: 100%; max-width: 120px; }
+   /* Se a busca ficar muito pequena, talvez movê-la apenas para o drawer */
+}
+
+/* ... (estilos do drawer e outros mantidos) ... */
+
+/* Ajuste para o botão de logout no Drawer para ter cor */
+.mobile-drawer .drawer-menu .ant-menu-item button[type="text"] {
+    color: #ff4d4f; /* Cor vermelha para logout */
+}
+.mobile-drawer .drawer-menu .ant-menu-item button[type="text"]:hover {
+    background-color: rgba(255, 77, 79, 0.1);
+}

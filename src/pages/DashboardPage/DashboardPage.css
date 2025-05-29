@@ -1,0 +1,186 @@
+/* src/pages/DashboardPage/DashboardPage.css */
+
+.dashboard-page-content {
+    padding: 24px;
+    background-color: #f0f2f5;
+    min-height: calc(100vh - 64px);
+}
+  
+.dashboard-page-content .page-breadcrumb {
+    margin-bottom: 24px; /* Aumentado o espaço */
+}
+  
+/* Estilo para os cabeçalhos de seção (Categorias e Posts) */
+.dashboard-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 16px 24px; /* Padding um pouco menor */
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06); /* Sombra mais suave */
+    margin-bottom: 20px; /* Espaço antes da tabela/grid */
+}
+.dashboard-section-header .ant-typography { /* Título da seção */
+    margin-bottom: 0 !important;
+    color: #333;
+    font-size: 1.3em !important; /* Tamanho do título da seção */
+}
+.dashboard-section-header .anticon { /* Ícone no título da seção */
+    margin-right: 8px;
+    color: #1890ff; /* Cor do ícone */
+}
+
+/* Tabela de Categorias */
+.categories-table {
+    background-color: #ffffff;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+.categories-table .ant-table-thead > tr > th {
+    background-color: #fafafa;
+    font-weight: 500; /* Peso da fonte um pouco menor */
+}
+.categories-table .ant-table-pagination.ant-pagination {
+    margin-top: 12px; /* Menos espaço para paginação simples */
+}
+
+/* Grid de Posts (mantém estilos anteriores) */
+.dashboard-posts-grid {
+    /* margin-top não é mais necessário aqui, o header da seção já tem margin-bottom */
+}
+.dashboard-post-card { /* ... (estilos do card como antes) ... */
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+.dashboard-post-card:hover {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    transform: translateY(-2px);
+}
+.dashboard-post-card-image {
+    height: 180px;
+    object-fit: cover;
+    width: 100%;
+}
+.dashboard-post-card .ant-card-meta-title .ant-typography {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.dashboard-post-card .ant-card-body {
+    padding: 16px;
+    flex-grow: 1;
+}
+.dashboard-post-card .ant-card-actions {
+    background-color: #fafafa;
+    border-top: 1px solid #f0f0f0;
+}
+.dashboard-post-card .ant-card-actions > li {
+    margin: 8px 0 !important;
+}
+.dashboard-post-card .ant-card-actions > li > span > .ant-btn {
+    padding: 0 8px;
+    font-size: 0.9em;
+}
+.dashboard-post-card .ant-card-actions .anticon {
+    margin-right: 4px;
+}
+  
+/* Upload de Imagem no Modal */
+.ant-upload-list-picture .ant-upload-list-item-thumbnail img,
+.ant-upload-list-picture-card .ant-upload-list-item-thumbnail img {
+    object-fit: cover !important;
+}
+  
+/* Footer do Modal (já é centralizado por padrão no AntD, mas para garantir) */
+.ant-modal-footer {
+    text-align: right; /* Padrão AntD */
+}
+.ant-modal-footer .ant-btn + .ant-btn { /* Espaçamento entre botões no footer do modal */
+    margin-left: 8px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .dashboard-section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .dashboard-post-card-image { height: 160px; }
+}
+@media (max-width: 576px) {
+    .dashboard-post-card-image { height: 140px; }
+    .dashboard-post-card .ant-card-actions > li > span > .ant-btn { font-size: 0.85em; }
+    .dashboard-post-card .ant-card-actions .anticon { margin-right: 2px; }
+    .categories-table .ant-table-thead > tr > th,
+    .categories-table .ant-table-tbody > tr > td {
+        padding: 10px 8px; /* Menos padding na tabela de categorias em mobile */
+    }
+}
+
+/* src/pages/DashboardPage/DashboardPage.css */
+
+/* ... (estilos anteriores) ... */
+
+/* Estilos para o ReactQuill no Dashboard */
+.dashboard-page-content .ql-toolbar.ql-snow {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  border-color: #d9d9d9;
+  background-color: #fafafa; /* Fundo da barra de ferramentas */
+}
+
+.dashboard-page-content .ql-container.ql-snow {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  border-color: #d9d9d9;
+  min-height: 200px; /* Altura mínima para o editor */
+  font-size: 1rem; /* Ajusta o tamanho da fonte base dentro do editor */
+  background-color: #fff; /* Garante fundo branco para o conteúdo do editor */
+}
+
+.dashboard-page-content .ql-editor {
+  min-height: 200px; /* Garante que a área de edição também tenha altura mínima */
+}
+
+/* Para garantir que o placeholder do Quill seja visível */
+.dashboard-page-content .ql-editor.ql-blank::before {
+  color: rgba(0, 0, 0, 0.45);
+  font-style: normal; /* Remove itálico do placeholder padrão se não desejar */
+}
+
+/* Ajuste para o modal quando o editor Quill está presente, pode precisar de mais altura */
+/* .ant-modal-body { */
+  /* max-height: 70vh; */ /* Exemplo */
+  /* overflow-y: auto; */
+/* } */
+
+/* Adaptações para tema escuro, se você tiver um e o Quill não se adaptar bem */
+/* .dark-theme .dashboard-page-content .ql-toolbar.ql-snow {
+  background-color: #2a2a2a;
+  border-color: #444;
+}
+.dark-theme .dashboard-page-content .ql-toolbar.ql-snow .ql-picker-label,
+.dark-theme .dashboard-page-content .ql-toolbar.ql-snow .ql-picker-item,
+.dark-theme .dashboard-page-content .ql-toolbar.ql-snow .ql-icon {
+  color: #ccc;
+}
+.dark-theme .dashboard-page-content .ql-toolbar.ql-snow .ql-active .ql-picker-label,
+.dark-theme .dashboard-page-content .ql-toolbar.ql-snow .ql-active .ql-icon {
+  color: #fff;
+}
+.dark-theme .dashboard-page-content .ql-container.ql-snow {
+  background-color: #1e1e1e;
+  border-color: #444;
+  color: #eee;
+}
+.dark-theme .dashboard-page-content .ql-editor.ql-blank::before {
+  color: rgba(255, 255, 255, 0.45);
+} */

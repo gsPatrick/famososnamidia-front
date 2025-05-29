@@ -1,0 +1,149 @@
+/* src/components/Footer/Footer.css */
+
+.app-footer {
+    background-color: #1f1f1f;
+    color: #cccccc;
+    padding: 48px 0 0;
+    line-height: 1.7;
+  }
+  
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  
+  .footer-column {
+    margin-bottom: 24px;
+  }
+  
+  .footer-logo a {
+    color: #f35627;
+    font-size: 2em !important;
+    font-weight: 700 !important;
+    text-decoration: none;
+  }
+  .footer-logo a:hover {
+    color: #ff7a59;
+  }
+  
+  .footer-tagline {
+    display: block;
+    color: #a0a0a0;
+    margin-bottom: 20px;
+    font-size: 0.95em;
+    max-width: 300px;
+  }
+  
+  .social-icons .ant-space-item a {
+    color: #cccccc;
+    font-size: 1.5em;
+    transition: color 0.3s ease;
+  }
+  .social-icons .ant-space-item a:hover {
+    color: #ffffff;
+  }
+  
+  .footer-column-title {
+    color: #ffffff !important;
+    margin-bottom: 12px !important;
+    font-size: 1.1em !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .footer-links li {
+    margin-bottom: 8px;
+  }
+  .footer-links li a {
+    color: #cccccc;
+    text-decoration: none;
+    transition: color 0.3s ease, padding-left 0.3s ease;
+    font-size: 0.95em;
+  }
+  .footer-links li a:hover {
+    color: #ffffff;
+    padding-left: 5px;
+  }
+  
+  .sub-footer-divider {
+    background-color: #333333 !important;
+    margin: 32px 0 0px;
+  }
+  
+  .sub-footer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    border-top: 1px solid #3a3a3a;
+  }
+  
+  .copyright-text,
+  .credits-text {
+    color: #a0a0a0;
+    font-size: 0.85em;
+  }
+  
+  /* Estilos para o crédito do desenvolvedor */
+  .credits-text .developer-link {
+    color: #f35627; /* Mesma cor do logo para destaque */
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease, transform 0.3s ease; /* Adiciona transição para transform */
+    display: inline-block; /* Necessário para transform funcionar */
+  }
+  
+  .credits-text .developer-link:hover {
+    color: #ff7a59;
+    text-decoration: none; /* Mantém sem sublinhado */
+    transform: translateY(-2px) scale(1.05); /* Efeito de levantar e aumentar um pouco */
+  }
+  
+  /* Animação para o coração */
+  .credits-heart {
+    color: #eb2f96; /* Cor rosa/vermelha para o coração */
+    margin: 0 4px;
+    animation: pulseHeart 1.5s infinite ease-in-out; /* Aplica a animação */
+    display: inline-block; /* Para a animação funcionar corretamente */
+  }
+  
+  @keyframes pulseHeart {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .footer-column { text-align: center; }
+    .footer-tagline { margin-left: auto; margin-right: auto; }
+    .social-icons { justify-content: center; }
+    .footer-links li { text-align: center; }
+    .footer-links li a:hover { padding-left: 0; }
+    .sub-footer { justify-content: center; text-align: center; }
+  }
+  
+  @media (max-width: 576px) {
+    .app-footer { padding-top: 32px; }
+    .footer-logo a { font-size: 1.8em !important; }
+    .footer-column-title { font-size: 1em !important; }
+    .social-icons .ant-space-item a { font-size: 1.3em; }
+  }

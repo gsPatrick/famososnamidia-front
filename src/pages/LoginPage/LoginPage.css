@@ -1,0 +1,143 @@
+/* src/pages/LoginPage/LoginPage.css */
+
+.login-page-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 64px); /* Subtrai altura do header, ajuste se tiver footer fixo */
+    /* background: linear-gradient(135deg, #ece9e6 0%, #ffffff 100%); */
+    /* Background global do body já usa variáveis, esta página herda --bg-primary ou --bg-secondary */
+    background-color: var(--bg-secondary); /* Pode usar o secundário para um leve contraste */
+    padding: 20px;
+  }
+  
+  .login-row {
+    width: 100%;
+  }
+  
+  .login-card {
+    padding: 20px 24px 30px; /* Aumenta padding inferior */
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); /* Sombra mais pronunciada */
+    background-color: var(--bg-card); /* Usa variável para o fundo do card */
+  }
+  /* Aplica transição para o card também */
+  .login-card {
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .login-card-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .login-icon-header {
+    font-size: 3em;
+    color: var(--link-color); /* Cor primária do tema */
+    margin-bottom: 16px;
+    display: block; /* Para centralizar com margin auto */
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .login-title {
+    color: var(--text-primary) !important;
+    margin-bottom: 8px !important;
+    font-weight: 600 !important;
+  }
+  
+  .login-card-header .ant-typography-secondary {
+    color: var(--text-secondary) !important;
+  }
+  
+  .login-form .ant-form-item {
+    margin-bottom: 20px; /* Espaçamento padrão entre itens */
+  }
+  
+  /* Inputs */
+  .login-form .ant-input-affix-wrapper,
+  .login-form .ant-input-password {
+    border-radius: 6px;
+    /* background-color: var(--bg-input) !important; */ /* Input do AntD já herda bem */
+    /* color: var(--text-primary) !important; */
+    /* border-color: var(--border-color-strong) !important; */
+  }
+  .login-form .ant-input-prefix .anticon {
+    color: var(--text-light);
+  }
+  /* Placeholder color for dark theme */
+  .dark-theme .login-form .ant-input::placeholder {
+      color: var(--text-light) !important;
+  }
+  
+  
+  /* Checkbox e Link "Esqueceu a senha?" */
+  .login-form .ant-checkbox-wrapper span:not(.ant-checkbox) { /* Texto do checkbox */
+    color: var(--text-secondary);
+  }
+  .dark-theme .login-form .ant-checkbox-inner { /* Borda e fundo do checkbox no tema escuro */
+      background-color: var(--bg-input);
+      border-color: var(--border-color-strong);
+  }
+  
+  .login-form-forgot {
+    color: var(--link-color);
+    float: right; /* AntD <Row justify="space-between"> já cuida disso */
+  }
+  .login-form-forgot:hover {
+    color: var(--link-hover-color);
+  }
+  
+  
+  /* Botão de Login */
+  .login-form-button {
+    border-radius: 6px;
+    height: 42px !important; /* Botão um pouco mais alto */
+    font-size: 1.05em;
+    /* Cores do botão primário são geralmente definidas pelo AntD e adaptam-se bem.
+       Se precisar de customização específica para o tema:
+    .light-theme .login-form-button { background: #1890ff; border-color: #1890ff; }
+    .dark-theme .login-form-button { background: var(--link-color); border-color: var(--link-color); }
+    */
+  }
+  .login-form-button .ant-spin { /* Ajusta cor do spinner no botão */
+      color: #fff;
+  }
+  .dark-theme .login-form-button .ant-spin {
+      color: var(--text-primary); /* Ou uma cor que contraste com o botão no tema escuro */
+  }
+  
+  
+  /* Link de Cadastro */
+  .login-form-register {
+    text-align: center;
+    color: var(--text-secondary);
+  }
+  .login-form-register a {
+    font-weight: 500;
+    color: var(--link-color);
+  }
+  .login-form-register a:hover {
+    color: var(--link-hover-color);
+  }
+  
+  .login-page-footer-text {
+      display: block;
+      text-align: center;
+      margin-top: 24px;
+      color: var(--text-light);
+      font-size: 0.85em;
+  }
+  
+  /* Responsividade */
+  @media (max-width: 576px) {
+    .login-card {
+      padding: 20px 16px 24px;
+      box-shadow: none; /* Remove sombra em telas muito pequenas */
+      border-radius: 0;
+    }
+    .login-page-content {
+        align-items: flex-start; /* Alinha no topo em mobile */
+        padding-top: 40px;
+    }
+  }

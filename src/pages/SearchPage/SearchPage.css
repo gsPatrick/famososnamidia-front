@@ -1,0 +1,106 @@
+/* src/pages/SearchPage/SearchPage.css */
+.search-page-content {
+    padding: 30px 50px;
+    background-color: #f9f9f9;
+    min-height: calc(100vh - 64px - 70px); /* Ajustar com footer */
+  }
+  
+  .search-page-content .page-breadcrumb {
+    margin-bottom: 24px;
+  }
+  
+  .search-page-content .page-main-title {
+    text-align: center;
+    margin-bottom: 10px !important;
+    color: #333;
+  }
+  
+  .search-query-highlight {
+    color: #1890ff; /* Cor de destaque para o termo buscado */
+    font-style: italic;
+  }
+  
+  .search-page-content .title-divider {
+    margin-top: 0 !important;
+    margin-bottom: 30px !important;
+    border-top-color: #ddd !important;
+    width: 80px;
+    min-width: 80px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .loading-spinner-search {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    text-align: center;
+  }
+  
+  /* Reutilizando estilos de card (idealmente de um CSS global ou importado) */
+  .search-page-content .post-card-link {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .search-result-card {
+    border: 1px solid #e8e8e8;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #fff;
+  }
+  .search-result-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+  .search-result-card-image {
+    height: 180px;
+    object-fit: cover;
+    width: 100%;
+  }
+  .search-result-card .ant-card-body {
+    padding: 20px;
+    flex-grow: 1;
+  }
+  .search-result-card-title.ant-typography {
+    margin-bottom: 10px !important;
+    font-size: 1.1em !important;
+    line-height: 1.4 !important;
+    color: #222;
+    /* Para garantir que o ellipsis funcione com Tooltip */
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .search-result-card-excerpt.ant-typography {
+    color: #666;
+    font-size: 0.95em;
+    line-height: 1.5;
+  }
+  .search-result-card .ant-card-actions {
+    background-color: #fafafa;
+    border-top: 1px solid #f0f0f0;
+  }
+  .search-result-card .ant-card-actions > li {
+    margin: 8px 0 !important;
+  }
+  
+  .no-results-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #555;
+  }
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
+    .search-page-content {
+      padding: 20px;
+    }
+  }

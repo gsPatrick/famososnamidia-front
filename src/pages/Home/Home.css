@@ -1,0 +1,141 @@
+/* src/pages/Home/Home.css */
+
+/* Container principal da página Home */
+.home-page-content {
+  padding: 30px 50px; /* Mais padding para um visual espaçado */
+  background-color: #f9f9f9; /* Fundo levemente cinza para contraste */
+  min-height: calc(100vh - 64px - 70px); /* Calcula altura mínima (excluindo header e footer - ajuste os valores se necessário) */
+}
+
+/* Título da página */
+.page-title {
+  text-align: center;
+  margin-bottom: 10px !important; /* Reduz margem inferior padrão */
+  color: #333;
+  font-weight: 600;
+}
+
+/* Divisor abaixo do título */
+.title-divider {
+  margin-top: 0 !important;
+  margin-bottom: 40px !important; /* Mais espaço após o divisor */
+  border-top-color: #ddd !important; /* Cor mais clara para o divisor */
+  width: 80px; /* Largura menor */
+  min-width: 80px; /* Garante largura */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+/* Container do spinner de carregamento */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px; /* Altura mínima para centralizar bem */
+}
+
+/* Estilização dos Cards de Post */
+.post-card {
+  border: 1px solid #e8e8e8; /* Borda sutil */
+  border-radius: 8px; /* Bordas mais arredondadas */
+  overflow: hidden; /* Garante que a imagem não vaze */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animação suave no hover */
+  display: flex; /* Permite que o card cresça para preencher a coluna */
+  flex-direction: column;
+  height: 100%; /* Faz o card ocupar toda a altura da Col */
+}
+
+.post-card:hover {
+  transform: translateY(-5px); /* Efeito de levantar levemente */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Sombra mais pronunciada no hover */
+}
+
+/* Imagem dentro do Card */
+.post-card-image {
+  height: 200px; /* Altura fixa para a imagem */
+  object-fit: cover; /* Garante que a imagem cubra a área sem distorcer */
+  width: 100%;
+}
+
+/* Corpo do Card */
+.post-card .ant-card-body {
+  padding: 20px; /* Padding interno */
+  flex-grow: 1; /* Faz o corpo do card crescer para empurrar as ações para baixo */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Título dentro do Card */
+.post-card-title.ant-typography { /* Seletores mais específicos */
+  margin-bottom: 10px !important;
+  font-size: 1.1em !important; /* Tamanho ajustado */
+  line-height: 1.4 !important;
+  color: #222;
+  /* Limita o título a 2 linhas (opcional) */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 3.08em; /* 2 linhas * 1.4 line-height */
+}
+
+/* Excerto (resumo) dentro do Card */
+.post-card-excerpt.ant-typography { /* Seletores mais específicos */
+  color: #666;
+  font-size: 0.95em;
+  line-height: 1.5;
+  flex-grow: 1; /* Ocupa o espaço restante antes das ações */
+  margin-bottom: 15px !important; /* Espaço antes das ações */
+}
+
+/* Ações no rodapé do Card */
+.post-card .ant-card-actions {
+  background-color: #fafafa; /* Fundo levemente diferente */
+  border-top: 1px solid #e8e8e8;
+}
+
+.post-card .ant-card-actions > li {
+  margin: 8px 0 !important; /* Ajusta margem dos itens de ação */
+}
+
+.post-card .ant-card-actions .ant-tag {
+  cursor: pointer; /* Indica que a tag pode ser clicável */
+}
+
+/* Paginação */
+.home-pagination {
+  text-align: center; /* Centraliza a paginação */
+  margin-top: 40px; /* Espaço acima da paginação */
+  margin-bottom: 20px; /* Espaço abaixo */
+}
+
+/* --- Responsividade Adicional (Ajustes Finos) --- */
+@media (max-width: 768px) {
+  .home-page-content {
+    padding: 20px 20px; /* Menos padding em telas menores */
+  }
+  .post-card-title.ant-typography {
+    font-size: 1em !important; /* Título ligeiramente menor */
+    min-height: 2.8em; /* Ajuste altura mínima */
+  }
+  .post-card-image {
+    height: 180px; /* Imagem um pouco menor */
+  }
+}
+
+@media (max-width: 576px) {
+  .home-page-content {
+    padding: 15px 15px; /* Menos padding ainda */
+  }
+   .post-card-image {
+    height: 160px;
+  }
+  .post-card .ant-card-body {
+    padding: 15px;
+  }
+   .page-title {
+     font-size: 1.5em; /* Título principal menor */
+   }
+}

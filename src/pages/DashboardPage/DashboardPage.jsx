@@ -202,66 +202,107 @@ const DashboardPage = () => {
   const quillFormats = [ 'header', 'bold', 'italic', 'underline', 'strike', 'blockquote', 'list', 'bullet', 'indent', 'link', 'image' ];
 
   // Props para o componente Upload
-  const imageUploadProps = {
-    name: 'imageFile', // Deve corresponder ao nome esperado pelo multer no backend: upload.single('imageFile')
-    listType: 'picture-card',
-    className: 'post-image-uploader',
-    fileList: postFileList,
-    maxCount: 1,
-    action: `${APP_CONFIG.API_URL}/upload/image`, // Usando APP_CONFIG.API_URL aqui
-    headers: {
-      Authorization: `Bearer ${getAuthToken()}`, // Adiciona token JWT ao header do upload
-    },
-    beforeUpload: (file) => {
-      const isJpgOrPngOrGifOrWebp = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/webp';
-      if (!isJpgOrPngOrGifOrWebp) {
-        message.error('Você só pode enviar arquivos JPG/PNG/GIF/WEBP!');
-      }
-      const isLt50M = file.size / 1024 / 1024 < 50;
-      if (!isLt50M) {
-        message.error('A imagem deve ser menor que 50MB!');
-      }
-      if (isJpgOrPngOrGifOrWebp && isLt50M) {
-        setUploadingImage(true); // Inicia o estado de loading para o upload
-        return true; // Permite o upload
-      }
-      return false; // Bloqueia o upload se a validação falhar
-    },
-    onChange: (info) => {
-      let newFileList = [...info.fileList];
-      newFileList = newFileList.slice(-1); // Mantém apenas o último arquivo
+ const imageUploadProps = {
+  name: 'imageFile', // Deve corresponder ao nome esperado pelo multer no backend
+  listType: 'picture-card',
+  className: 'post-image-uploader',
+  fileList: postFileList,
+  maxCount: 1,
+  action: `${APP_CONFIG.API_URL}/upload/image`, // URL do endpoint de upload
+  headers: {
+    Authorization: `Bearer ${getAuthToken()}`, // Adiciona token JWT
+  },
+  beforeUpload: (file) => {
+    const isJpgOrPngOrGifOrWebp = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/webp';
+    if (!isJpgOrPngOrGifOrWebp) {
+      message.error('Você só pode enviar arquivos JPG/PNG/GIF/WEBP!');
+    }
+    const isLt50M = file.size / 1024 / 1024 < 50; // Limite de 50MB
+    if (!isLt50M) {
+      message.error('A imagem deve ser menor que 50MB!');
+    }
+    if (isJpgOrPngOrGifOrWebp && isLt50M) {
+      setUploadingImage(true); // Inicia o estado de loading para o upload
+      return true; // Permite o upload
+    }
+    return false; // Bloqueia o upload se a validação falhar
+  },
+  onChange: (info) => {
+    // console.log('Upload info:', info); // Para depuração
+    let newFileList = [...info.fileList];
 
-      newFileList = newFileList.map(file => {
-        if (file.response) {
-          // Componente finalizou o upload
-          // O backend retorna: { message, imageUrl, filename }
-          // message.success(`${file.name} enviado com sucesso.`); // AntD já mostra status
-          setUploadingImage(false); // Finaliza o estado de loading do upload
-          // Define a URL da imagem no formulário e no fileList para preview
-          const serverImageUrl = file.response.imageUrl; // URL relativa como /uploads/images/nome.jpg
-          postForm.setFieldsValue({ imageUrl: fullImageUrl });
-          return { ...file, url: serverImageUrl, status: 'done' }; // Adiciona a URL ao objeto do arquivo
-        }
-        if (file.status === 'error') {
-            message.error(`${file.name} falhou ao enviar. ${file.response?.message || ''}`);
-            setUploadingImage(false);
-        } else if (file.status === 'uploading') {
-            setUploadingImage(true);
-        } else if (file.status === 'removed') {
-            setUploadingImage(false);
-            postForm.setFieldsValue({ imageUrl: null }); // Limpa a URL se a imagem for removida
-        }
-        return file;
-      });
-      setPostFileList(newFileList);
-    },
-    onRemove: () => { // Chamado quando o 'x' do item é clicado
-        postForm.setFieldsValue({ imageUrl: null });
-        setPostFileList([]);
+    // Mantém apenas o último arquivo se maxCount for 1 e o usuário tentar adicionar mais
+    // O AntD Upload já deve lidar com maxCount, mas isso é uma garantia extra.
+    if (newFileList.length > 1) {
+        newFileList = newFileList.slice(-1);
+    }
+    
+    newFileList = newFileList.map(file => {
+      // Cria uma cópia do arquivo para evitar mutação direta do objeto do AntD Upload
+      let updatedFile = { 
+        ...file,
+        // Garante uid e name para cada arquivo na lista, essencial para AntD
+        uid: file.uid || `rc-upload-${Date.now()}-${Math.random().toString().slice(2)}`, // Gera um uid se não existir
+        name: file.name || 'uploaded_image.png' // Fornece um nome padrão se não existir
+      };
+
+      if (file.status === 'done' && file.response) { // Upload bem-sucedido E tem resposta
         setUploadingImage(false);
-        return true; // Permite a remoção
-    },
-  };
+        const relativeImageUrl = file.response.imageUrl; // Ex: "/uploads/images/nome.jpg"
+        let localFullImageUrl = ''; // URL completa a ser construída
+
+        if (relativeImageUrl) {
+          if (relativeImageUrl.startsWith('http')) { // Já é uma URL absoluta
+              localFullImageUrl = relativeImageUrl;
+          } else if (CONST_IMAGES_BASE_URL && relativeImageUrl.startsWith('/')) { // É relativa, precisa construir
+              localFullImageUrl = `${CONST_IMAGES_BASE_URL}${relativeImageUrl}`;
+          } else { // Formato inesperado, usar como está ou logar erro
+              console.warn("Formato de URL de imagem inesperado ou CONST_IMAGES_BASE_URL faltando:", relativeImageUrl);
+              localFullImageUrl = relativeImageUrl; // Fallback para a URL como veio
+          }
+        }
+        
+        // console.log('Full Image URL to set in form:', localFullImageUrl);
+        postForm.setFieldsValue({ imageUrl: localFullImageUrl });
+        
+        // Atualiza o objeto 'updatedFile' para o fileList
+        updatedFile.url = localFullImageUrl; // Para o preview
+        updatedFile.status = 'done'; // Confirma o status
+
+      } else if (file.status === 'error') {
+          message.error(`${updatedFile.name} falhou ao enviar. ${file.response?.message || (file.error?.message || 'Erro desconhecido.')}`);
+          console.error("Upload Error Details:", file.error, file.response);
+          setUploadingImage(false);
+          updatedFile.status = 'error';
+          // Se o upload falhar, você pode querer limpar a URL do formulário se ela foi definida anteriormente
+          // if (postForm.getFieldValue('imageUrl') === updatedFile.url) { // Checa se a URL no form é a do arquivo que falhou
+          //    postForm.setFieldsValue({ imageUrl: null });
+          // }
+          // E também remover a entrada do fileList ou marcar como erro.
+          // O AntD Upload deve visualmente indicar o erro.
+      } else if (file.status === 'uploading') {
+          setUploadingImage(true);
+          updatedFile.status = 'uploading';
+      } else if (file.status === 'removed') {
+          // Esta lógica já está em onRemove, que é chamado quando o usuário clica no 'x'
+          // Se for uma remoção programática, certifique-se que uploadingImage é false.
+          setUploadingImage(false);
+      }
+      // Se o status não for 'uploading', 'done', 'error', ou 'removed', ele pode ser undefined
+      // ou outro estado que o AntD gerencia.
+      // É importante retornar sempre uma representação válida do arquivo.
+      return updatedFile;
+    });
+    
+    setPostFileList(newFileList);
+  },
+  onRemove: () => { // Chamado quando o 'x' do item é clicado pelo usuário
+      postForm.setFieldsValue({ imageUrl: null }); // Limpa a URL no formulário
+      setPostFileList([]); // Esvazia a lista de arquivos (pois maxCount é 1)
+      setUploadingImage(false); // Garante que o estado de loading seja desativado
+      return true; // Retornar true para permitir a remoção
+  },
+};
 
 
   // --- CRUD Usuários ---

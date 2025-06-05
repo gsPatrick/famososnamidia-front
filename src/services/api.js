@@ -1,6 +1,6 @@
 // src/services/api.js
 import axios from 'axios';
-import APP_CONFIG from '../config.js'; // Ajuste o caminho se necessário
+import APP_CONFIG from '../../config'; // Ajuste o caminho se necessário
 
 // Defina a URL base da sua API a partir do arquivo de configuração
 const API_BASE_URL_FROM_CONFIG = APP_CONFIG.API_URL;

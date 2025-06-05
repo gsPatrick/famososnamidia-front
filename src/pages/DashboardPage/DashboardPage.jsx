@@ -14,6 +14,8 @@ import {
 import { get, post, put, del, post as apiFormPost } from '../../services/api'; // apiFormPost para FormData
 import { useAuth } from '../../context/AuthContext';
 import { CONST_IMAGES_BASE_URL } from '../../services/api'; // Importe a constante
+import APP_CONFIG from '../../../config'; // Necessário para action do Upload
+
 
 
 import ReactQuill from 'react-quill';

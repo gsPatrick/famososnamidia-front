@@ -2,210 +2,265 @@
 
 .post-detail-page {
     padding: 30px 0;
-    background-color: #ffffff;
-  }
-  
-  .post-container {
-    max-width: 800px;
+    background-color: #ffffff; /* Considerar usar var(--background-color) para temas */
+}
+
+.post-container {
+    max-width: 800px; /* Largura máxima do conteúdo principal */
     margin: 0 auto;
     padding: 0 20px;
-  }
-  
-  .loading-spinner,
-  .error-message {
+}
+
+.loading-spinner,
+.error-message {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 400px;
+    min-height: 400px; /* Altura para centralizar o spinner/erro */
     text-align: center;
-  }
-  
-  .post-breadcrumb {
+}
+
+.post-breadcrumb {
     margin-bottom: 20px;
     font-size: 0.9em;
-    color: #888;
-  }
-  .post-breadcrumb a {
-    color: #555;
+    color: var(--text-color-secondary, #888); /* Cor secundária para breadcrumb */
+}
+.post-breadcrumb a {
+    color: var(--text-color-tertiary, #555); /* Cor para links no breadcrumb */
     transition: color 0.3s ease;
-  }
-  .post-breadcrumb a:hover {
-    color: #1890ff;
-  }
-  
-  .post-title {
+}
+.post-breadcrumb a:hover {
+    color: var(--primary-color, #1890ff); /* Cor primária ao passar o mouse */
+}
+
+.post-title {
     font-size: 2.5em;
     font-weight: 700;
     line-height: 1.3;
-    margin-bottom: 15px !important;
-    color: #222;
-  }
-  
-  .post-meta-and-share {
-    /* margin-bottom: 20px; // Já coberto pelo gutter na Row */
-    align-items: flex-start;
-  }
-  
-  .post-meta {
-     margin-bottom: 15px; /* Para mobile, antes dos botões de share */
-  }
-  .post-meta .meta-item {
+    margin-bottom: 15px !important; /* Importante para sobrescrever estilos de Typography do AntD se necessário */
+    color: var(--text-color-headings, #222); /* Cor para títulos principais */
+}
+
+.post-meta-and-share {
+    align-items: flex-start; /* Alinha meta e botões de share no topo em telas maiores */
+}
+
+.post-meta {
+     margin-bottom: 15px; /* Espaço abaixo do meta em telas mobile antes dos botões de share */
+}
+.post-meta .meta-item {
     display: inline-flex;
     align-items: center;
     font-size: 0.9em;
-    color: #777;
-  }
-  .post-meta .anticon {
+    color: var(--text-color-secondary, #777);
+}
+.post-meta .anticon {
     margin-right: 6px;
     vertical-align: middle;
-  }
-  .post-meta .category-tag {
+}
+.post-meta .category-tag {
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-  }
-  .post-meta .category-tag a {
-    color: inherit !important;
+}
+.post-meta .category-tag a {
+    color: inherit !important; /* Garante que a cor da tag seja usada */
     text-decoration: none;
-  }
-  
-  .share-buttons {
-    text-align: right;
-  }
-  .share-label {
+}
+
+.share-buttons {
+    text-align: right; /* Alinha botões de share à direita em telas maiores */
+}
+.share-label {
     margin-right: 10px;
-    color: #555;
+    color: var(--text-color-secondary, #555);
     font-size: 0.9em;
     vertical-align: middle;
-  }
-  .share-buttons .ant-space-item button {
-    color: #555;
-    border: 1px solid #d9d9d9;
-  }
-  .share-buttons .ant-space-item button:hover {
-    color: #1890ff;
-    border-color: #1890ff;
-  }
-  
-  .post-featured-image {
+}
+.share-buttons .ant-space-item button {
+    color: var(--text-color-tertiary, #555);
+    border: 1px solid var(--border-color-base, #d9d9d9); /* Cor da borda padrão */
+}
+.share-buttons .ant-space-item button:hover {
+    color: var(--primary-color, #1890ff);
+    border-color: var(--primary-color, #1890ff);
+}
+
+.post-featured-image {
     width: 100%;
     height: auto;
-    max-height: 450px;
-    object-fit: cover;
+    max-height: 450px; /* Altura máxima para a imagem de destaque */
+    object-fit: cover; /* Garante que a imagem cubra a área sem distorcer */
     border-radius: 8px;
     margin-bottom: 30px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-  
-  .post-body {
-    font-size: 1.1em;
-    line-height: 1.7;
-    color: #333;
-  }
-  .post-body p { margin-bottom: 1.5em; }
-  .post-body h1, .post-body h2, .post-body h3, .post-body h4, .post-body h5, .post-body h6 {
-    margin-top: 2em; margin-bottom: 1em; font-weight: 600; line-height: 1.4; color: #111;
-  }
-  .post-body h2 { font-size: 1.8em; }
-  .post-body h3 { font-size: 1.5em; }
-  .post-body h4 { font-size: 1.3em; }
-  .post-body ul, .post-body ol { margin-bottom: 1.5em; padding-left: 2em; }
-  .post-body li { margin-bottom: 0.5em; }
-  .post-body blockquote { border-left: 4px solid #e8e8e8; padding-left: 1em; margin: 1.5em 0; color: #666; font-style: italic; }
-  .post-body a { color: #1890ff; text-decoration: none; transition: color 0.3s ease; }
-  .post-body a:hover { color: #096dd9; text-decoration: underline; }
-  
-  /* --- Seção de Comentários Customizada --- */
-  .custom-comment-section {
+}
+
+.post-body {
+    font-size: 1.1em; /* Tamanho de fonte base para o conteúdo do post */
+    line-height: 1.7; /* Espaçamento entre linhas para melhor legibilidade */
+    color: var(--text-color-base, #333); /* Cor de texto principal */
+}
+.post-body p { 
+    margin-bottom: 1.5em; 
+}
+.post-body h1, .post-body h2, .post-body h3, 
+.post-body h4, .post-body h5, .post-body h6 {
+    margin-top: 2em; 
+    margin-bottom: 1em; 
+    font-weight: 600; 
+    line-height: 1.4; 
+    color: var(--text-color-headings, #111);
+}
+.post-body h1 { font-size: 2em; } /* Ajustado para ser menor que o título principal da página */
+.post-body h2 { font-size: 1.8em; }
+.post-body h3 { font-size: 1.5em; }
+.post-body h4 { font-size: 1.3em; }
+.post-body ul, .post-body ol { 
+    margin-bottom: 1.5em; 
+    padding-left: 2em; 
+}
+.post-body li { 
+    margin-bottom: 0.5em; 
+}
+.post-body blockquote { 
+    border-left: 4px solid var(--border-color-split, #e8e8e8); /* Cor da borda para blockquote */
+    padding-left: 1em; 
+    margin: 1.5em 0; 
+    color: var(--text-color-secondary, #666); 
+    font-style: italic; 
+}
+.post-body a { 
+    color: var(--primary-color, #1890ff); 
+    text-decoration: none; 
+    transition: color 0.3s ease; 
+}
+.post-body a:hover { 
+    color: var(--primary-color-hover, #096dd9); /* Cor de hover para links */
+    text-decoration: underline; 
+}
+
+/* --- ESTILOS PARA IMAGENS DENTRO DO CONTEÚDO DO POST --- */
+.post-body figure, /* Para Quill que pode envolver imagens em <figure> */
+.post-body img {
+  display: block;   /* Permite margin: auto para centralizar */
+  max-width: 100%;  /* Responsividade: nunca maior que o contêiner */
+  /* Se você quiser uma largura máxima específica, descomente e ajuste a linha abaixo: */
+  /* max-width: 700px;  */
+  /* width: 100%; */ /* Para que tente preencher até o max-width se definido */
+  height: auto;     /* Mantém a proporção da imagem */
+  margin-top: 2em;      /* Espaço vertical acima */
+  margin-bottom: 2em;   /* Espaço vertical abaixo */
+  margin-left: auto;    /* Centraliza horizontalmente */
+  margin-right: auto;   /* Centraliza horizontalmente */
+  border-radius: 8px;   /* Cantos arredondados (opcional) */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Sombra sutil (opcional) */
+}
+/* Se a imagem estiver dentro de um <p>, resetar a margem do <p> pai para evitar duplo espaçamento */
+.post-body p > img,
+.post-body p > figure > img {
+    margin-top: 0.5em; /* Reduzir margem se estiver dentro de um parágrafo */
+    margin-bottom: 0.5em;
+}
+.post-body p:has(> img:only-child),
+.post-body p:has(> figure:only-child) {
+    margin-bottom: 2em; /* Se o parágrafo só contém a imagem, a margem inferior do <p> pode ser a da imagem */
+    line-height: 0; /* Para evitar espaço extra de linha se o <p> só tiver a imagem */
+}
+/* --- FIM DOS ESTILOS PARA IMAGENS DENTRO DO CONTEÚDO --- */
+
+
+/* --- Seção de Comentários Customizada --- */
+.custom-comment-section {
     margin-top: 40px;
-  }
-  
-  .comment-section-title { /* Usado para o título da seção */
+    padding-top: 20px; /* Adiciona um pouco de espaço antes do título da seção */
+    border-top: 1px solid var(--border-color-split, #f0f0f0); /* Linha divisória sutil */
+}
+
+.comment-section-title {
     font-size: 1.8em !important;
     margin-bottom: 25px !important;
-    color: #333;
+    color: var(--text-color-headings, #333);
     display: flex;
     align-items: center;
-  }
-  .comment-section-title .anticon {
+}
+.comment-section-title .anticon {
     margin-right: 10px;
-  }
-  
-  /* Formulário de Comentário Customizado */
-  .custom-comment-form-container {
-    margin-bottom: 30px; /* Espaço entre o formulário e a lista de comentários */
-    padding: 16px;
-    background-color: #f9f9f9;
+    color: var(--primary-color, #1890ff); /* Cor do ícone */
+}
+
+/* Formulário de Comentário Customizado */
+.custom-comment-form-container {
+    margin-bottom: 30px;
+    padding: 20px; /* Mais padding para o container do formulário */
+    background-color: var(--background-color-light, #f9f9f9); /* Cor de fundo clara */
     border-radius: 8px;
-    border: 1px solid #f0f0f0;
-  }
-  .custom-comment-form-container .ant-form-item {
-    margin-bottom: 10px; /* Menos margem nos itens do form */
-  }
-  .custom-comment-form-container .ant-form-item:last-child {
+    border: 1px solid var(--border-color-base, #f0f0f0);
+}
+.custom-comment-form-container .ant-form-item {
+    margin-bottom: 12px; /* Ajuste de margem */
+}
+.custom-comment-form-container .ant-form-item:last-child {
     margin-bottom: 0;
-  }
-  
-  /* Lista de Comentários Customizada */
-  .custom-comment-list .ant-list-item {
-    padding: 16px 0; /* Mais padding para cada item da lista */
-    border-bottom: 1px solid #f0f0f0;
-  }
-  .custom-comment-list .ant-list-item:last-child {
+}
+
+/* Lista de Comentários Customizada */
+.custom-comment-list .ant-list-item {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border-color-split, #f0f0f0);
+}
+.custom-comment-list .ant-list-item:last-child {
     border-bottom: none;
-  }
-  
-  .custom-comment-list .ant-list-item-meta-avatar {
-    margin-right: 16px; /* Espaço para o avatar */
-  }
-  
-  .custom-comment-author {
-    color: #333;
-    font-weight: 600; /* Nome do autor em negrito */
-  }
-  
-  .custom-comment-content {
-    color: #555;
+}
+
+.custom-comment-list .ant-list-item-meta-avatar {
+    margin-right: 16px;
+}
+
+.custom-comment-author {
+    color: var(--text-color-base, #333);
+    font-weight: 600;
+}
+
+.custom-comment-content {
+    color: var(--text-color-secondary, #555);
     line-height: 1.6;
-    margin-top: 4px; /* Pequeno espaço entre autor e conteúdo */
-    margin-bottom: 8px; /* Espaço antes da data */
-    word-break: break-word; /* Quebra palavras longas */
-  }
-  
-  .custom-comment-datetime {
+    margin-top: 4px;
+    margin-bottom: 8px;
+    word-break: break-word;
+    white-space: pre-wrap; /* Para respeitar quebras de linha do textarea */
+}
+
+.custom-comment-datetime {
     font-size: 0.85em;
-    color: #999;
-  }
-  
-  
-  /* --- Responsividade --- */
-  @media (max-width: 768px) {
+    color: var(--text-color-tertiary, #999);
+}
+
+
+/* --- Responsividade --- */
+@media (max-width: 768px) {
     .post-title { font-size: 2em; }
     .post-body { font-size: 1em; }
     .post-detail-page { padding: 20px 0; }
     .post-container { padding: 0 15px; }
-  
+
+    .post-meta-and-share { flex-direction: column; } /* Empilha meta e share */
     .share-buttons { text-align: left; margin-top: 15px; }
     .share-label { display: block; margin-bottom: 8px; margin-right: 0; }
     .comment-section-title { font-size: 1.5em !important; }
-  
+
     .custom-comment-form-container {
-      padding: 12px;
+      padding: 16px;
     }
-  }
-  
-  @media (max-width: 576px) {
+}
+
+@media (max-width: 576px) {
     .post-title { font-size: 1.7em; }
-    .post-meta .meta-item { font-size: 0.85em; }
+    .post-meta .meta-item { font-size: 0.85em; margin-bottom: 4px; }
     .post-breadcrumb { font-size: 0.85em; }
     .post-featured-image { margin-bottom: 20px; border-radius: 4px; }
-  
-    .custom-comment-list .ant-list-item-meta-avatar {
-      /* Opcional: esconder avatar em telas muito pequenas se necessário */
-      /* display: none; */
-    }
-    .custom-comment-form-container .ant-row > .ant-col:first-child { /* Avatar no form */
-       /* display: none; */ /* Opcional: Esconder avatar do form */
-    }
-  }
+
+    /* Opcional: Ocultar avatar no formulário de comentário em telas muito pequenas */
+    /* .custom-comment-form-container .ant-row > .ant-col:first-child { display: none; } */
+}

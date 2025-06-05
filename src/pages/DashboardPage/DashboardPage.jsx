@@ -13,6 +13,8 @@ import {
 } from '@ant-design/icons';
 import { get, post, put, del, post as apiFormPost } from '../../services/api'; // apiFormPost para FormData
 import { useAuth } from '../../context/AuthContext';
+import { CONST_IMAGES_BASE_URL } from '../../services/api'; // Importe a constante
+
 
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -316,7 +318,14 @@ const DashboardPage = () => {
        posts.length > 0 ? (
         <>
           <Row gutter={[16, 16]} className="dashboard-posts-grid">
-            {posts.map(p => ( <Col xs={24} sm={12} md={8} lg={6} key={p.id}> <Card className="dashboard-post-card" hoverable cover={ <img alt={p.title} src={p.imageUrl || "https://placehold.co/600x400/E0E0E0/BDBDBD.png?text=Sem+Imagem"} className="dashboard-post-card-image" onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/600x400/E0E0E0/BDBDBD.png?text=Erro+Img"; }} /> } actions={[ <Tooltip title="Editar"><Button type="text" icon={<EditOutlined />} key="edit" onClick={() => showEditPostModal(p)} /></Tooltip>, <Popconfirm title="Excluir este post?" onConfirm={() => handleDeletePost(p.id)} okText="Sim" cancelText="Não" key="delete"> <Tooltip title="Excluir"><Button type="text" danger icon={<DeleteOutlined />}/></Tooltip> </Popconfirm>, <Tooltip title="Ver Post"><Link to={`/post/${p.slug || p.id}`} target="_blank" key="view"><Button type="text" icon={<EyeOutlined />}/></Link></Tooltip> ]} > <Meta title={<Tooltip title={p.title} placement="topLeft">{p.title}</Tooltip>} description={ <> <Tag color={p.status === 'published' ? 'success' : p.status === 'draft' ? 'processing' : 'error'}>{p.status?.toUpperCase()}</Tag> <Text type="secondary" style={{ fontSize: '0.8em', display: 'block', margin: '4px 0' }}> {p.category?.name || 'N/A'} - {p.publishedAt ? new Date(p.publishedAt).toLocaleDateString('pt-BR') : new Date(p.createdAt).toLocaleDateString('pt-BR')} </Text> <Paragraph ellipsis={{ rows: 2 }} style={{ marginTop: '8px', fontSize: '0.9em', minHeight: '2.7em' }}> {p.excerpt} </Paragraph> </> } /> </Card> </Col> ))}
+            {posts.map(p => ( <Col xs={24} sm={12} md={8} lg={6} key={p.id}> <Card className="dashboard-post-card" hoverable cover={
+               <img
+  alt={p.title}
+  src={p.imageUrl ? (p.imageUrl.startsWith('http') ? p.imageUrl : `${CONST_IMAGES_BASE_URL}${p.imageUrl}`) : "https://placehold.co/600x400/E0E0E0/BDBDBD.png?text=Sem+Imagem"}
+  className="dashboard-post-card-image"
+  onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/600x400/E0E0E0/BDBDBD.png?text=Erro+Img"; }}
+/>
+               } actions={[ <Tooltip title="Editar"><Button type="text" icon={<EditOutlined />} key="edit" onClick={() => showEditPostModal(p)} /></Tooltip>, <Popconfirm title="Excluir este post?" onConfirm={() => handleDeletePost(p.id)} okText="Sim" cancelText="Não" key="delete"> <Tooltip title="Excluir"><Button type="text" danger icon={<DeleteOutlined />}/></Tooltip> </Popconfirm>, <Tooltip title="Ver Post"><Link to={`/post/${p.slug || p.id}`} target="_blank" key="view"><Button type="text" icon={<EyeOutlined />}/></Link></Tooltip> ]} > <Meta title={<Tooltip title={p.title} placement="topLeft">{p.title}</Tooltip>} description={ <> <Tag color={p.status === 'published' ? 'success' : p.status === 'draft' ? 'processing' : 'error'}>{p.status?.toUpperCase()}</Tag> <Text type="secondary" style={{ fontSize: '0.8em', display: 'block', margin: '4px 0' }}> {p.category?.name || 'N/A'} - {p.publishedAt ? new Date(p.publishedAt).toLocaleDateString('pt-BR') : new Date(p.createdAt).toLocaleDateString('pt-BR')} </Text> <Paragraph ellipsis={{ rows: 2 }} style={{ marginTop: '8px', fontSize: '0.9em', minHeight: '2.7em' }}> {p.excerpt} </Paragraph> </> } /> </Card> </Col> ))}
           </Row>
           {totalPosts > POSTS_PER_PAGE && ( <Pagination current={currentPostsPage} total={totalPosts} pageSize={POSTS_PER_PAGE} onChange={handlePostsPageChange} className="dashboard-entity-pagination" showSizeChanger={false} showTotal={(total, range) => `${range[0]}-${range[1]} de ${total} posts`} /> )}
         </>
@@ -397,7 +406,7 @@ const DashboardPage = () => {
           {postFileList.length > 0 && postFileList[0].url && postFileList[0].status === 'done' && (
             <div style={{marginTop: '10px'}}>
                 <Text strong>Preview da Imagem Selecionada/Enviada:</Text><br/>
-                <img src={postFileList[0].url.startsWith('/') ? `${VITE_API_URL}${postFileList[0].url}` : postFileList[0].url} alt="Preview" style={{maxWidth: '200px', maxHeight: '150px', border: '1px solid #eee', borderRadius: '4px'}}/>
+                <img src={postFileList[0].url.startsWith('/') ? `${CONST_IMAGES_BASE_URL}${postFileList[0].url}` : postFileList[0].url} alt="Preview" style={{maxWidth: '200px', maxHeight: '150px', border: '1px solid #eee', borderRadius: '4px'}}/>
             </div>
           )}
         </Form>

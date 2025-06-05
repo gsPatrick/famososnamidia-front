@@ -1,14 +1,16 @@
 // src/services/api.js
 import axios from 'axios';
+import APP_CONFIG from '../config.js'; // Ajuste o caminho se necessário
 
-// Defina a URL base da sua API.
-// Para Vite, as variáveis de ambiente devem começar com VITE_
-// e são acessadas via import.meta.env.VITE_NOMBRE_VARIABLE
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://geral-famosonamidiaapi.r954jc.easypanel.host/api/v1'; // Ajuste a porta se necessário
-// console.log('API Base URL:', API_BASE_URL); // Para depuração
+// Defina a URL base da sua API a partir do arquivo de configuração
+const API_BASE_URL_FROM_CONFIG = APP_CONFIG.API_URL;
+
+// Exporte a URL base das imagens para ser usada em outros lugares
+// Use o nome da chave que você definiu em APP_CONFIG
+export const CONST_IMAGES_BASE_URL = APP_CONFIG.IMAGES_DOMAIN_BASE_URL; // Ou APP_CONFIG.APP_IMAGES_BASE_URL
 
 const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_BASE_URL_FROM_CONFIG,
   headers: {
     'Content-Type': 'application/json',
   },

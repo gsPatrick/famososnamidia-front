@@ -2,11 +2,11 @@
 
 .post-detail-page {
     padding: 30px 0;
-    background-color: #ffffff; /* Considerar usar var(--background-color) para temas */
+    background-color: var(--background-color, #ffffff); 
 }
 
 .post-container {
-    max-width: 800px; /* Largura máxima do conteúdo principal */
+    max-width: 800px; 
     margin: 0 auto;
     padding: 0 20px;
 }
@@ -17,37 +17,37 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 400px; /* Altura para centralizar o spinner/erro */
+    min-height: 400px; 
     text-align: center;
 }
 
 .post-breadcrumb {
     margin-bottom: 20px;
     font-size: 0.9em;
-    color: var(--text-color-secondary, #888); /* Cor secundária para breadcrumb */
+    color: var(--text-color-secondary, #888); 
 }
 .post-breadcrumb a {
-    color: var(--text-color-tertiary, #555); /* Cor para links no breadcrumb */
+    color: var(--text-color-tertiary, #555); 
     transition: color 0.3s ease;
 }
 .post-breadcrumb a:hover {
-    color: var(--primary-color, #1890ff); /* Cor primária ao passar o mouse */
+    color: var(--primary-color, #1890ff); 
 }
 
 .post-title {
     font-size: 2.5em;
     font-weight: 700;
     line-height: 1.3;
-    margin-bottom: 15px !important; /* Importante para sobrescrever estilos de Typography do AntD se necessário */
-    color: var(--text-color-headings, #222); /* Cor para títulos principais */
+    margin-bottom: 15px !important; 
+    color: var(--text-color-headings, #222); 
 }
 
 .post-meta-and-share {
-    align-items: flex-start; /* Alinha meta e botões de share no topo em telas maiores */
+    align-items: flex-start; 
 }
 
 .post-meta {
-     margin-bottom: 15px; /* Espaço abaixo do meta em telas mobile antes dos botões de share */
+     margin-bottom: 15px; 
 }
 .post-meta .meta-item {
     display: inline-flex;
@@ -65,12 +65,12 @@
     align-items: center;
 }
 .post-meta .category-tag a {
-    color: inherit !important; /* Garante que a cor da tag seja usada */
+    color: inherit !important; 
     text-decoration: none;
 }
 
 .share-buttons {
-    text-align: right; /* Alinha botões de share à direita em telas maiores */
+    text-align: right; 
 }
 .share-label {
     margin-right: 10px;
@@ -80,27 +80,34 @@
 }
 .share-buttons .ant-space-item button {
     color: var(--text-color-tertiary, #555);
-    border: 1px solid var(--border-color-base, #d9d9d9); /* Cor da borda padrão */
+    border: 1px solid var(--border-color-base, #d9d9d9); 
 }
 .share-buttons .ant-space-item button:hover {
     color: var(--primary-color, #1890ff);
     border-color: var(--primary-color, #1890ff);
 }
 
+/* --- ESTILOS PARA IMAGEM DE DESTAQUE (CAPA) - OPÇÃO 1 --- */
 .post-featured-image {
-    width: 100%;
-    height: auto;
-    max-height: 450px; /* Altura máxima para a imagem de destaque */
-    object-fit: cover; /* Garante que a imagem cubra a área sem distorcer */
-    border-radius: 8px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%; /* Ocupa toda a largura do .post-container (máx. 800px por padrão) */
+  height: auto;
+  max-height: 500px; /* Altura máxima aumentada para dar mais destaque */
+  object-fit: cover; /* Cobre a área designada, pode cortar um pouco para preencher */
+  border-radius: 12px; /* Bordas um pouco mais arredondadas */
+  margin-top: 10px;    /* Ajuste conforme o espaço do Divider acima */
+  margin-bottom: 40px; /* Mais espaço abaixo, separando do conteúdo */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12); /* Sombra mais pronunciada para destaque */
+  /* display: block; */ /* Já é um elemento de bloco (Image do AntD ou <img>) mas não custa garantir se precisar de margin:auto */
+  /* margin-left: auto; */ /* Se precisar centralizar explicitamente, mas width:100% já o faz dentro do container */
+  /* margin-right: auto; */
 }
+/* --- FIM DOS ESTILOS PARA IMAGEM DE DESTAQUE --- */
+
 
 .post-body {
-    font-size: 1.1em; /* Tamanho de fonte base para o conteúdo do post */
-    line-height: 1.7; /* Espaçamento entre linhas para melhor legibilidade */
-    color: var(--text-color-base, #333); /* Cor de texto principal */
+    font-size: 1.1em; 
+    line-height: 1.7; 
+    color: var(--text-color-base, #333); 
 }
 .post-body p { 
     margin-bottom: 1.5em; 
@@ -113,7 +120,7 @@
     line-height: 1.4; 
     color: var(--text-color-headings, #111);
 }
-.post-body h1 { font-size: 2em; } /* Ajustado para ser menor que o título principal da página */
+.post-body h1 { font-size: 2em; } 
 .post-body h2 { font-size: 1.8em; }
 .post-body h3 { font-size: 1.5em; }
 .post-body h4 { font-size: 1.3em; }
@@ -125,7 +132,7 @@
     margin-bottom: 0.5em; 
 }
 .post-body blockquote { 
-    border-left: 4px solid var(--border-color-split, #e8e8e8); /* Cor da borda para blockquote */
+    border-left: 4px solid var(--border-color-split, #e8e8e8); 
     padding-left: 1em; 
     margin: 1.5em 0; 
     color: var(--text-color-secondary, #666); 
@@ -137,36 +144,35 @@
     transition: color 0.3s ease; 
 }
 .post-body a:hover { 
-    color: var(--primary-color-hover, #096dd9); /* Cor de hover para links */
+    color: var(--primary-color-hover, #096dd9); 
     text-decoration: underline; 
 }
 
 /* --- ESTILOS PARA IMAGENS DENTRO DO CONTEÚDO DO POST --- */
-.post-body figure, /* Para Quill que pode envolver imagens em <figure> */
+.post-body figure, 
 .post-body img {
-  display: block;   /* Permite margin: auto para centralizar */
-  max-width: 100%;  /* Responsividade: nunca maior que o contêiner */
-  /* Se você quiser uma largura máxima específica, descomente e ajuste a linha abaixo: */
-  /* max-width: 700px;  */
-  /* width: 100%; */ /* Para que tente preencher até o max-width se definido */
-  height: auto;     /* Mantém a proporção da imagem */
-  margin-top: 2em;      /* Espaço vertical acima */
-  margin-bottom: 2em;   /* Espaço vertical abaixo */
-  margin-left: auto;    /* Centraliza horizontalmente */
-  margin-right: auto;   /* Centraliza horizontalmente */
-  border-radius: 8px;   /* Cantos arredondados (opcional) */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Sombra sutil (opcional) */
+  display: block;   
+  max-width: 100%;  
+  /* Descomente e ajuste a linha abaixo se quiser uma largura máxima específica para imagens no conteúdo: */
+  /* max-width: 700px;  */ 
+  /* width: 100%; */ 
+  height: auto;     
+  margin-top: 2em;      
+  margin-bottom: 2em;   
+  margin-left: auto;    
+  margin-right: auto;   
+  border-radius: 8px;   
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
 }
-/* Se a imagem estiver dentro de um <p>, resetar a margem do <p> pai para evitar duplo espaçamento */
 .post-body p > img,
 .post-body p > figure > img {
-    margin-top: 0.5em; /* Reduzir margem se estiver dentro de um parágrafo */
+    margin-top: 0.5em; 
     margin-bottom: 0.5em;
 }
 .post-body p:has(> img:only-child),
 .post-body p:has(> figure:only-child) {
-    margin-bottom: 2em; /* Se o parágrafo só contém a imagem, a margem inferior do <p> pode ser a da imagem */
-    line-height: 0; /* Para evitar espaço extra de linha se o <p> só tiver a imagem */
+    margin-bottom: 2em; 
+    line-height: 0; 
 }
 /* --- FIM DOS ESTILOS PARA IMAGENS DENTRO DO CONTEÚDO --- */
 
@@ -174,8 +180,8 @@
 /* --- Seção de Comentários Customizada --- */
 .custom-comment-section {
     margin-top: 40px;
-    padding-top: 20px; /* Adiciona um pouco de espaço antes do título da seção */
-    border-top: 1px solid var(--border-color-split, #f0f0f0); /* Linha divisória sutil */
+    padding-top: 20px; 
+    border-top: 1px solid var(--border-color-split, #f0f0f0); 
 }
 
 .comment-section-title {
@@ -187,19 +193,19 @@
 }
 .comment-section-title .anticon {
     margin-right: 10px;
-    color: var(--primary-color, #1890ff); /* Cor do ícone */
+    color: var(--primary-color, #1890ff); 
 }
 
 /* Formulário de Comentário Customizado */
 .custom-comment-form-container {
     margin-bottom: 30px;
-    padding: 20px; /* Mais padding para o container do formulário */
-    background-color: var(--background-color-light, #f9f9f9); /* Cor de fundo clara */
+    padding: 20px; 
+    background-color: var(--background-color-light, #f9f9f9); 
     border-radius: 8px;
     border: 1px solid var(--border-color-base, #f0f0f0);
 }
 .custom-comment-form-container .ant-form-item {
-    margin-bottom: 12px; /* Ajuste de margem */
+    margin-bottom: 12px; 
 }
 .custom-comment-form-container .ant-form-item:last-child {
     margin-bottom: 0;
@@ -229,7 +235,7 @@
     margin-top: 4px;
     margin-bottom: 8px;
     word-break: break-word;
-    white-space: pre-wrap; /* Para respeitar quebras de linha do textarea */
+    white-space: pre-wrap; 
 }
 
 .custom-comment-datetime {
@@ -245,7 +251,13 @@
     .post-detail-page { padding: 20px 0; }
     .post-container { padding: 0 15px; }
 
-    .post-meta-and-share { flex-direction: column; } /* Empilha meta e share */
+    .post-featured-image {
+        max-height: 400px; /* Altura máxima da capa em tablets */
+        margin-bottom: 30px;
+        border-radius: 10px;
+    }
+
+    .post-meta-and-share { flex-direction: column; } 
     .share-buttons { text-align: left; margin-top: 15px; }
     .share-label { display: block; margin-bottom: 8px; margin-right: 0; }
     .comment-section-title { font-size: 1.5em !important; }
@@ -259,8 +271,10 @@
     .post-title { font-size: 1.7em; }
     .post-meta .meta-item { font-size: 0.85em; margin-bottom: 4px; }
     .post-breadcrumb { font-size: 0.85em; }
-    .post-featured-image { margin-bottom: 20px; border-radius: 4px; }
-
-    /* Opcional: Ocultar avatar no formulário de comentário em telas muito pequenas */
-    /* .custom-comment-form-container .ant-row > .ant-col:first-child { display: none; } */
+    
+    .post-featured-image {
+        max-height: 300px; /* Altura máxima da capa em mobile */
+        margin-bottom: 20px; 
+        border-radius: 8px;
+    }
 }

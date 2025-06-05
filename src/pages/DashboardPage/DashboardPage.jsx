@@ -90,8 +90,7 @@ const DashboardPage = () => {
     setLoadingPosts(true); setErrorPosts(null);
     try {
       const params = { page: currentPostsPage, limit: POSTS_PER_PAGE, status: 'all', sortBy: 'createdAt', sortOrder: 'DESC' };
-      const response = await get('/posts', params);
-      setPosts(response.posts || []);
+      const response = await get('/posts/dashboard/all', params); // <<< MUDE AQUI      setPosts(response.posts || []);
       setTotalPosts(response.totalItems || 0);
     } catch (err) { setErrorPosts(err.message || "Erro ao carregar posts."); console.error("Erro Dashboard/fetchPosts:", err); }
     finally { setLoadingPosts(false); }

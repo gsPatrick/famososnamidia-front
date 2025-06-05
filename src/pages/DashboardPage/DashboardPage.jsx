@@ -165,28 +165,36 @@ const DashboardPage = () => {
     setIsPostModalVisible(true);
   };
   const handleDeletePost = async (postId) => { try { await del(`/posts/${postId}`); message.success('Post excluído!'); fetchPosts(); } catch (error) { message.error(error.message || 'Erro ao excluir.'); console.error("Erro Dashboard/handleDeletePost:", error);}};
-  const handlePostModalOk = async () => {
+ const handlePostModalOk = async () => {
     try {
       const values = await postForm.validateFields();
-      // Se um arquivo foi selecionado para upload e ainda não tem uma URL (ou seja, é um novo upload),
-      // o campo imageUrl do form deve ser atualizado pela função de upload antes de salvar o post.
-      // Se imageUrl já está preenchido (ou foi preenchido pelo upload), ele será usado.
       const payload = { ...values };
-      // Se postFileList tem um arquivo com 'url' (que veio do upload bem-sucedido), use-o.
-      // Senão, use o valor do campo imageUrl (que pode ser uma URL colada ou a URL de uma imagem existente).
-      if (postFileList.length > 0 && postFileList[0].url && postFileList[0].status === 'done') {
-          payload.imageUrl = postFileList[0].url;
-      } else if (!values.imageUrl && editingPost?.imageUrl) {
-          // Se o campo imageUrl foi limpo e havia uma imagem antes, e nenhum novo upload foi feito
-          // payload.imageUrl = null; // Para remover a imagem
+      if (payload.imageUrl && payload.imageUrl.startsWith('/') && !payload.imageUrl.startsWith('//') && CONST_IMAGES_BASE_URL) {
+         payload.imageUrl = `${CONST_IMAGES_BASE_URL}${payload.imageUrl}`;
       }
-
-
-      if (editingPost) { await put(`/posts/${editingPost.id}`, payload); message.success('Post atualizado!'); }
-      else { await post('/posts', payload); message.success('Post criado!'); }
-      setIsPostModalVisible(false); fetchPosts(); setPostFileList([]); // Limpa file list
-    } catch (errorInfo) { if (errorInfo.message) { message.error(errorInfo.message || 'Erro.'); console.error("API Error", errorInfo); } else { message.error('Verifique os campos.'); console.log('Validation failed:', errorInfo);}}
+      console.log('Final payload for post:', payload);
+      if (editingPost) {
+        await put(`/posts/${editingPost.id}`, payload);
+        message.success('Post atualizado!');
+      } else {
+        await post('/posts', payload);
+        message.success('Post criado!');
+      }
+      setIsPostModalVisible(false);
+      fetchPosts(editingPost ? currentPostsPage : 1); // Se editando, fica na mesma página, se criando, vai para a primeira
+      setPostFileList([]);
+      // postForm.resetFields(); // Removido pois destroyOnClose cuida disso e pode ser melhor para edição
+    } catch (errorInfo) {
+      if (errorInfo.message) {
+        message.error(errorInfo.message || 'Erro ao salvar o post.');
+        console.error("API Error on post save:", errorInfo);
+      } else {
+        message.error('Verifique os campos do formulário.');
+        console.log('Form validation failed:', errorInfo);
+      }
+    }
   };
+
   const handlePostModalCancel = () => { setIsPostModalVisible(false); setPostFileList([]); /* Limpa file list ao cancelar */ };
   const quillModules = { toolbar: [ [{ 'header': [1, 2, 3, false] }], ['bold', 'italic', 'underline', 'strike', 'blockquote'], [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}], ['link', 'image'], ['clean'] ]};
   const quillFormats = [ 'header', 'bold', 'italic', 'underline', 'strike', 'blockquote', 'list', 'bullet', 'indent', 'link', 'image' ];
@@ -198,7 +206,7 @@ const DashboardPage = () => {
     className: 'post-image-uploader',
     fileList: postFileList,
     maxCount: 1,
-    action: `https://geral-famosonamidiaapi.r954jc.easypanel.host/api/v1/upload/image`, // URL do endpoint de upload
+    action: `${APP_CONFIG.API_URL}/upload/image`, // Usando APP_CONFIG.API_URL aqui
     headers: {
       Authorization: `Bearer ${getAuthToken()}`, // Adiciona token JWT ao header do upload
     },
@@ -229,7 +237,7 @@ const DashboardPage = () => {
           setUploadingImage(false); // Finaliza o estado de loading do upload
           // Define a URL da imagem no formulário e no fileList para preview
           const serverImageUrl = file.response.imageUrl; // URL relativa como /uploads/images/nome.jpg
-          postForm.setFieldsValue({ imageUrl: serverImageUrl });
+          postForm.setFieldsValue({ imageUrl: fullImageUrl });
           return { ...file, url: serverImageUrl, status: 'done' }; // Adiciona a URL ao objeto do arquivo
         }
         if (file.status === 'error') {

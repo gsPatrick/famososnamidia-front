@@ -86,15 +86,41 @@ const DashboardPage = () => {
     finally { setLoadingCategories(false); }
   }, []);
 
-  const fetchPosts = useCallback(async () => {
-    setLoadingPosts(true); setErrorPosts(null);
+ const fetchPosts = useCallback(async () => {
+    setLoadingPosts(true);
+    setErrorPosts(null);
     try {
-      const params = { page: currentPostsPage, limit: POSTS_PER_PAGE, status: 'all', sortBy: 'createdAt', sortOrder: 'DESC' };
-      const response = await get('/posts/dashboard/all', params); // <<< MUDE AQUI      setPosts(response.posts || []);
+      const params = {
+        page: currentPostsPage,
+        limit: POSTS_PER_PAGE,
+        status: 'all', // Solicita todos os status
+        sortBy: 'createdAt',
+        sortOrder: 'DESC'
+      };
+
+      // Use o endpoint específico do dashboard que é interpretado pelo backend
+      // para retornar todos os posts, incluindo drafts e archived.
+      const response = await get('/posts/dashboard/all', params);
+
+      setPosts(response.posts || []);
       setTotalPosts(response.totalItems || 0);
-    } catch (err) { setErrorPosts(err.message || "Erro ao carregar posts."); console.error("Erro Dashboard/fetchPosts:", err); }
-    finally { setLoadingPosts(false); }
-  }, [currentPostsPage]);
+    } catch (err) {
+      setErrorPosts(err.message || "Erro ao carregar posts.");
+      console.error("Erro Dashboard/fetchPosts:", err);
+    } finally {
+      setLoadingPosts(false);
+    }
+  }, [currentPostsPage]); // Adicione POSTS_PER_PAGE se ele for um estado ou prop que pode mudar
+
+
+  useEffect(() => {
+    if (currentUser && (isAdmin || isAuthor)) {
+      fetchCategories();
+      fetchPosts(); // Esta função agora usa o endpoint correto
+      if (isAdmin) { fetchUsers(); }
+      else { /* setUsers([]); setLoadingUsers(false); */ } // Se tiver estado de usuários
+    }
+  }, [currentUser, isAdmin, isAuthor, fetchCategories, fetchPosts, fetchUsers]);
 
   const fetchUsers = useCallback(async () => {
     if (!isAdmin) { setLoadingUsers(false); setUsers([]); return; }

@@ -27,6 +27,8 @@ const { Meta } = Card;
 const POSTS_PER_PAGE = 8;
 const CATEGORIES_PER_PAGE = 10;
 const USERS_PER_PAGE = 10;
+const VITE_API_URL='https://geral-famosonamidiaapi.r954jc.easypanel.host/api/v1'
+
 
 // Função para obter o token (pode ser movida para um helper se usada em mais lugares)
 const getAuthToken = () => localStorage.getItem('authToken');
@@ -194,7 +196,7 @@ const DashboardPage = () => {
     className: 'post-image-uploader',
     fileList: postFileList,
     maxCount: 1,
-    action: `${import.meta.env.VITE_API_URL}/upload/image`, // URL do endpoint de upload
+    action: `https://geral-famosonamidiaapi.r954jc.easypanel.host/api/v1/upload/image`, // URL do endpoint de upload
     headers: {
       Authorization: `Bearer ${getAuthToken()}`, // Adiciona token JWT ao header do upload
     },
@@ -203,11 +205,11 @@ const DashboardPage = () => {
       if (!isJpgOrPngOrGifOrWebp) {
         message.error('Você só pode enviar arquivos JPG/PNG/GIF/WEBP!');
       }
-      const isLt5M = file.size / 1024 / 1024 < 5;
-      if (!isLt5M) {
-        message.error('A imagem deve ser menor que 5MB!');
+      const isLt50M = file.size / 1024 / 1024 < 50;
+      if (!isLt50M) {
+        message.error('A imagem deve ser menor que 50MB!');
       }
-      if (isJpgOrPngOrGifOrWebp && isLt5M) {
+      if (isJpgOrPngOrGifOrWebp && isLt50M) {
         setUploadingImage(true); // Inicia o estado de loading para o upload
         return true; // Permite o upload
       }
@@ -395,7 +397,7 @@ const DashboardPage = () => {
           {postFileList.length > 0 && postFileList[0].url && postFileList[0].status === 'done' && (
             <div style={{marginTop: '10px'}}>
                 <Text strong>Preview da Imagem Selecionada/Enviada:</Text><br/>
-                <img src={postFileList[0].url.startsWith('/') ? `${import.meta.env.VITE_API_BASE_URL_FOR_IMAGES}${postFileList[0].url}` : postFileList[0].url} alt="Preview" style={{maxWidth: '200px', maxHeight: '150px', border: '1px solid #eee', borderRadius: '4px'}}/>
+                <img src={postFileList[0].url.startsWith('/') ? `${VITE_API_URL}${postFileList[0].url}` : postFileList[0].url} alt="Preview" style={{maxWidth: '200px', maxHeight: '150px', border: '1px solid #eee', borderRadius: '4px'}}/>
             </div>
           )}
         </Form>

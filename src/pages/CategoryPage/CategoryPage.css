@@ -15,7 +15,7 @@
     margin-right: 4px;
   }
   
-  /* Título da Página (reutilizando .page-title e .title-divider da HomePage.css se forem globais) */
+  /* Título da Página */
   .category-page-content .page-title {
     text-align: center;
     margin-bottom: 10px !important;
@@ -38,125 +38,127 @@
     margin-right: auto;
   }
   
-  /* Spinner de Carregamento (reutilizando .loading-spinner da HomePage.css) */
+  /* Spinner de Carregamento */
   .category-page-content .loading-spinner {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 300px;
   }
+
+/* --- ESTILOS DE LISTA HORIZONTAL --- */
+.category-page-content .posts-list-container {
+  margin-block: 30px;
+}
+.category-page-content .ant-list-item {
+  padding: 0;
+  border-bottom: none;
+}
+.category-page-content .horizontal-post-list-item {
+  margin-bottom: 24px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.category-page-content .horizontal-post-list-item:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  border-color: #d0d0d0;
+}
+.category-page-content .post-list-item-link {
+  display: block;
+  padding: 20px;
+  color: inherit;
+  text-decoration: none;
+}
+.category-page-content .horizontal-post-image-wrapper {
+  width: 100%;
+  background-color: #f0f0f0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.category-page-content .horizontal-post-image {
+  width: 100%;
+  height: auto;
+  max-height: 250px;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.category-page-content .horizontal-post-list-item:hover .horizontal-post-image {
+  transform: scale(1.05);
+}
+.category-page-content .horizontal-post-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.category-page-content .horizontal-post-category-tag {
+  margin-bottom: 12px !important;
+  display: inline-block;
+}
+.category-page-content .horizontal-post-category-link {
+  text-decoration: none;
+}
+.category-page-content .horizontal-post-title {
+  margin-top: 0 !important;
+  margin-bottom: 12px !important;
+  font-size: 1.4em !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+  color: #222;
+}
+.category-page-content .horizontal-post-excerpt {
+  color: #666;
+  font-size: 0.95em;
+  line-height: 1.6;
+  margin-bottom: 16px !important;
+  flex-grow: 1;
+}
+.category-page-content .horizontal-post-meta {
+  font-size: 0.85em;
+  margin-top: auto;
+}
   
-  /* Estilos dos Cards e Imagens (Reutilizando da HomePage.css) */
-  /* Se você não criou um index.css para estilos globais de card, copie-os aqui
-     ou importe HomePage.css se quiser compartilhar todos os estilos.
-     Para este exemplo, estou assumindo que você pode querer alguma variação ou
-     manter os estilos separados. */
+/* Paginação */
+.category-page-content .category-pagination {
+  text-align: center;
+}
   
-  .category-page-content .post-card-link { /* Garante que o link não tenha sublinhado */
-      text-decoration: none;
-      color: inherit;
+/* Mensagem de Nenhum Post */
+.no-posts-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #555;
+}
+.no-posts-message .ant-empty-description {
+  font-size: 1.1em;
+}
+  
+/* Responsividade */
+@media (max-width: 768px) {
+  .category-page-content {
+    padding: 20px 20px;
   }
-  
-  .category-page-content .post-card {
-    border: 1px solid #e8e8e8;
-    border-radius: 8px;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+  .category-page-content .horizontal-post-title {
+    font-size: 1.2em !important;
   }
+}
   
-  .category-page-content .post-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+@media (max-width: 576px) {
+  .category-page-content {
+    padding: 15px 15px;
   }
-  
-  .category-page-content .post-card-image {
-    height: 200px;
-    object-fit: cover;
-    width: 100%;
+  .category-page-content .horizontal-post-image {
+    max-height: 200px;
   }
-  
-  .category-page-content .post-card .ant-card-body {
-    padding: 20px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
+  .category-page-content .post-list-item-link {
+    padding: 15px;
   }
-  
-  .category-page-content .post-card-title.ant-typography {
-    margin-bottom: 10px !important;
+  .category-page-content .page-title {
+    font-size: 1.3em;
+  }
+  .category-page-content .horizontal-post-title {
     font-size: 1.1em !important;
-    line-height: 1.4 !important;
-    color: #222;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-height: 3.08em;
   }
-  
-  .category-page-content .post-card-excerpt.ant-typography {
-    color: #666;
-    font-size: 0.95em;
-    line-height: 1.5;
-    flex-grow: 1;
-    margin-bottom: 15px !important;
-  }
-  .category-page-content .post-card .ant-card-actions {
-      background-color: #fafafa;
-      border-top: 1px solid #e8e8e8;
-  }
-  .category-page-content .post-card .ant-card-actions > li {
-      margin: 8px 0 !important;
-  }
-  
-  
-  /* Paginação (reutilizando .home-pagination da HomePage.css) */
-  .category-page-content .category-pagination {
-    text-align: center;
-    margin-top: 40px;
-    margin-bottom: 20px;
-  }
-  
-  /* Mensagem de Nenhum Post */
-  .no-posts-message {
-      text-align: center;
-      padding: 40px 20px;
-      color: #555;
-  }
-  .no-posts-message .ant-empty-description {
-      font-size: 1.1em;
-  }
-  
-  
-  /* Responsividade */
-  @media (max-width: 768px) {
-    .category-page-content {
-      padding: 20px 20px;
-    }
-    .category-page-content .post-card-title.ant-typography {
-      font-size: 1em !important;
-      min-height: 2.8em;
-    }
-    .category-page-content .post-card-image {
-      height: 180px;
-    }
-  }
-  
-  @media (max-width: 576px) {
-    .category-page-content {
-      padding: 15px 15px;
-    }
-    .category-page-content .post-card-image {
-      height: 160px;
-    }
-    .category-page-content .post-card .ant-card-body {
-      padding: 15px;
-    }
-    .category-page-content .page-title {
-      font-size: 1.3em; /* Título principal menor */
-    }
-  }
+}

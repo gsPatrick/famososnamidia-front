@@ -1,30 +1,94 @@
 // src/pages/PostDetail/PostDetailPage.jsx
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom'; // Adicionado useNavigate
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   Layout, Typography, Spin, Image, Breadcrumb, Tag, Divider, Row, Col, Alert,
-  List, Form, Input, Button, Avatar, Tooltip, message, Space, Empty // Adicionado Empty, useNavigate
+  List, Form, Input, Button, Avatar, Tooltip, message, Space, Empty, Progress
 } from 'antd';
 import {
   ClockCircleOutlined, UserOutlined, FolderOpenOutlined, MessageOutlined,
-  FacebookFilled, TwitterOutlined, WhatsAppOutlined, LinkedinFilled, LinkOutlined, HomeOutlined 
+  FacebookFilled, TwitterOutlined, WhatsAppOutlined, LinkedinFilled, LinkOutlined, HomeOutlined, 
+  ZoomInOutlined, ZoomOutOutlined
 } from '@ant-design/icons';
-import { get, post as apiPost } from '../../services/api'; // <<< IMPORTAR 'get' e 'post' (renomeado para apiPost)
+import { get, post as apiPost } from '../../services/api';
 import './PostDetailPage.css';
 
 const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
 const { TextArea } = Input;
 
+// Componente para a Barra de Progresso de Leitura
+const ReadingProgressBar = () => {
+  const [progress, setProgress] = useState(0);
+
+  const handleScroll = () => {
+    const element = document.documentElement;
+    const scrollTotal = element.scrollHeight - element.clientHeight;
+    if (scrollTotal <= 0) {
+      setProgress(100);
+      return;
+    }
+    const scrollCurrent = window.scrollY;
+    const scrollPercentage = (scrollCurrent / scrollTotal) * 100;
+    setProgress(Math.min(scrollPercentage, 100));
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <Progress
+      percent={progress}
+      showInfo={false}
+      strokeWidth={4}
+      className="reading-progress-bar"
+    />
+  );
+};
+
+// Componente para o Painel de Ferramentas
+const ReadingToolsPanel = ({ fontSize, readingTheme, increaseFontSize, decreaseFontSize, changeTheme }) => {
+    const fontSizePercentage = Math.round(((fontSize - 14) / (24 - 14)) * 100); // 14px=0%, 24px=100%
+
+    return (
+        <div className="reading-tools-panel">
+            <Title level={5} className="tools-panel-title">Ferramentas</Title>
+            <div className="tools-section">
+                <Text className="tools-label">Tamanho do Texto</Text>
+                <Space className="font-size-controls">
+                    <Button icon={<ZoomOutOutlined />} onClick={decreaseFontSize} aria-label="Diminuir fonte" />
+                    <div className="font-size-indicator">{fontSizePercentage}%</div>
+                    <Button icon={<ZoomInOutlined />} onClick={increaseFontSize} aria-label="Aumentar fonte" />
+                </Space>
+            </div>
+             <div className="tools-section">
+                <Text className="tools-label">Modo de Leitura</Text>
+                <Space direction="vertical" style={{ width: '100%' }}>
+                    <Button block onClick={() => changeTheme('light')} type={readingTheme === 'light' ? 'primary' : 'default'}>Claro</Button>
+                    <Button block onClick={() => changeTheme('sepia')} type={readingTheme === 'sepia' ? 'primary' : 'default'}>Sépia</Button>
+                    <Button block onClick={() => changeTheme('dark')} type={readingTheme === 'dark' ? 'primary' : 'default'}>Escuro</Button>
+                </Space>
+            </div>
+        </div>
+    );
+};
+
+
 const PostDetailPage = () => {
-  const { postId: identifier } = useParams(); // Renomeado postId para identifier para clareza
-  const [postData, setPostData] = useState(null); // Renomeado post para postData para evitar conflito com a função 'post' da api
+  const { postId: identifier } = useParams();
+  const [postData, setPostData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [comments, setComments] = useState([]);
   const [submittingComment, setSubmittingComment] = useState(false);
   const [commentForm] = Form.useForm();
-  const navigate = useNavigate(); // Para navegação programática
+  const navigate = useNavigate();
+
+  // Estados para as ferramentas de leitura
+  const [fontSize, setFontSize] = useState(18); // Tamanho inicial em pixels
+  const [readingTheme, setReadingTheme] = useState('light'); // 'light', 'sepia', 'dark'
 
   useEffect(() => {
     const fetchPostDetails = async () => {
@@ -32,16 +96,11 @@ const PostDetailPage = () => {
       setLoading(true);
       setError(null);
       try {
-        // O backend /posts/:identifier pode receber ID ou SLUG
         const fetchedPost = await get(`/posts/${identifier}`);
-        // console.log('Detalhes do Post da API:', fetchedPost);
-        
-        // O backend já retorna o post com os comentários aninhados em fetchedPost.comments
         setPostData(fetchedPost);
-        setComments(fetchedPost.comments || []); // Garante que comments seja um array
+        setComments(fetchedPost.comments || []);
 
       } catch (err) {
-        console.error(`Erro ao buscar detalhes do post ${identifier}:`, err);
         if (err.message && (err.message.includes('Post não encontrado') || err.status === 404)) {
             setError("Post não encontrado ou não está mais disponível.");
         } else {
@@ -76,7 +135,7 @@ const PostDetailPage = () => {
       .catch(() => message.error('Falha ao copiar o link.'));
   };
 
-  const handleCommentSubmit = async (values) => { // <<< Tornar async
+  const handleCommentSubmit = async (values) => {
      if (!values.newComment || !values.newComment.trim()) {
          message.warning('Por favor, escreva um comentário.');
          return;
@@ -90,14 +149,9 @@ const PostDetailPage = () => {
     try {
         const commentPayload = {
             content: values.newComment,
-            // guestName e guestEmail seriam necessários se o usuário não estiver logado
-            // e o backend os exigir para comentários anônimos.
-            // O backend /post/:postId/comments pega o userId do token se logado.
         };
-        // Adicionar guestName e guestEmail se o usuário não estiver logado (exemplo)
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
-            // Simulando que pedimos nome para guest, o backend pode exigir
             const guestName = prompt("Por favor, insira seu nome para comentar:", "Visitante");
             if (!guestName) {
                 message.info("Nome é necessário para comentar como visitante.");
@@ -105,22 +159,10 @@ const PostDetailPage = () => {
                 return;
             }
             commentPayload.guestName = guestName;
-            // commentPayload.guestEmail = prompt("Seu email (opcional):"); // Se quiser pedir email
         }
 
         const newComment = await apiPost(`/post/${postData.id}/comments`, commentPayload);
-        // console.log("Novo comentário da API:", newComment);
-        
-        // Atualiza a lista de comentários com o novo comentário e dados do usuário (se logado) ou guest
-        // O backend deve retornar o comentário criado com o usuário (se logado) ou guestName.
-        // Para ter o avatar e nome corretos imediatamente, precisamos que o backend retorne
-        // o comentário com o 'user' (se logado) ou guestName populado.
-        
-        // Solução Simples: Adiciona o comentário como veio da API.
-        // Se o usuário estiver logado, o backend deve retornar o comentário com a associação `user`
-        // (id, name). Se for guest, `guestName` estará lá.
         setComments(prevComments => [newComment, ...prevComments]);
-
         commentForm.resetFields();
         message.success('Comentário adicionado com sucesso!');
 
@@ -134,13 +176,13 @@ const PostDetailPage = () => {
 
   const getPlaceholderAvatar = (commentUser, guestName) => {
     const colors = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae', '#1890ff', '#87d068', '#eb2f96', '#52c41a'];
-    let seed = 'V'; // Visitante padrão
+    let seed = 'V';
     let char = '?';
 
-    if (commentUser && commentUser.name) { // Comentário de usuário logado
+    if (commentUser && commentUser.name) {
         seed = commentUser.name;
         char = commentUser.name.charAt(0).toUpperCase();
-    } else if (guestName) { // Comentário de visitante
+    } else if (guestName) {
         seed = guestName;
         char = guestName.charAt(0).toUpperCase();
     }
@@ -157,12 +199,14 @@ const PostDetailPage = () => {
     { title: <Link to="/"><HomeOutlined /> Início</Link> },
   ];
 
+  const increaseFontSize = () => setFontSize(prev => Math.min(prev + 1, 24));
+  const decreaseFontSize = () => setFontSize(prev => Math.max(prev - 1, 14));
+  const changeTheme = (theme) => setReadingTheme(theme);
 
   if (loading) {
     return (
         <Content className="post-detail-page">
             <div className="post-container">
-                <Breadcrumb className="post-breadcrumb" items={breadcrumbItems} />
                 <div className="loading-spinner" style={{minHeight: '60vh'}}>
                     <Spin size="large" tip="Carregando post..." />
                 </div>
@@ -185,7 +229,7 @@ const PostDetailPage = () => {
     );
   }
 
-  if (!postData) { // Caso não esteja carregando e não haja erro, mas postData seja null
+  if (!postData) {
     return (
         <Content className="post-detail-page">
             <div className="post-container">
@@ -199,14 +243,12 @@ const PostDetailPage = () => {
     )
   }
 
-  // Se chegou aqui, postData existe
   return (
-    <Content className="post-detail-page">
+    <Content className={`post-detail-page reading-theme-${readingTheme}`}>
+      <ReadingProgressBar />
       <div className="post-container">
         <Breadcrumb className="post-breadcrumb" items={breadcrumbItems} />
-
         <Title level={1} className="post-title">{postData.title}</Title>
-
         <Row justify="space-between" align="middle" className="post-meta-and-share" gutter={[0, 16]}>
             <Col xs={24} md={16} className="post-meta">
             <Row gutter={[16, 8]} align="middle" wrap={true}>
@@ -226,70 +268,80 @@ const PostDetailPage = () => {
                 </Space>
             </Col>
         </Row>
-
         <Divider />
         {postData.imageUrl && <Image src={postData.imageUrl} alt={postData.title} className="post-featured-image" preview={false} onError={(e) => { e.target.style.display='none'; }} />}
-        <div className="post-body" dangerouslySetInnerHTML={{ __html: postData.content }} />
-
+        
+        <div className="post-body-wrapper" style={{ fontSize: `${fontSize}px` }}>
+          <div className="post-body" dangerouslySetInnerHTML={{ __html: postData.content }} />
+        </div>
         <Divider />
+
+        {/* --- INÍCIO DA SEÇÃO DE COMENTÁRIOS (CÓDIGO COMPLETO) --- */}
         <div className="comment-section custom-comment-section">
-        <Title level={3} className="comment-section-title">
-            <MessageOutlined /> {comments.length} Comentário(s)
-        </Title>
-
-        <div className="custom-comment-form-container">
-            <Row gutter={16} wrap={false} align="top">
-            <Col flex="none">
-                {/* Avatar do usuário logado ou placeholder para guest */}
-                {getPlaceholderAvatar(
-                    localStorage.getItem('authToken') ? { name: localStorage.getItem('userName') } : null,
-                    !localStorage.getItem('authToken') ? 'Eu' : null
-                )}
-            </Col>
-            <Col flex="auto">
-                <Form form={commentForm} onFinish={handleCommentSubmit} layout="vertical">
-                <Form.Item name="newComment" style={{ marginBottom: '8px' }} rules={[{ required: true, message: 'Por favor, escreva algo!' }]}>
-                    <TextArea rows={3} placeholder="Deixe seu comentário..." />
-                </Form.Item>
-                <Form.Item style={{ marginBottom: 0 }}>
-                    <Button htmlType="submit" loading={submittingComment} type="primary">
-                    Comentar
-                    </Button>
-                </Form.Item>
-                </Form>
-            </Col>
-            </Row>
+          <Title level={3} className="comment-section-title">
+              <MessageOutlined /> {comments.length} Comentário(s)
+          </Title>
+          <div className="custom-comment-form-container">
+              <Row gutter={16} wrap={false} align="top">
+              <Col flex="none">
+                  {getPlaceholderAvatar(
+                      localStorage.getItem('authToken') ? { name: localStorage.getItem('userName') } : null,
+                      !localStorage.getItem('authToken') ? 'Eu' : null
+                  )}
+              </Col>
+              <Col flex="auto">
+                  <Form form={commentForm} onFinish={handleCommentSubmit} layout="vertical">
+                  <Form.Item name="newComment" style={{ marginBottom: '8px' }} rules={[{ required: true, message: 'Por favor, escreva algo!' }]}>
+                      <TextArea rows={3} placeholder="Deixe seu comentário..." />
+                  </Form.Item>
+                  <Form.Item style={{ marginBottom: 0 }}>
+                      <Button htmlType="submit" loading={submittingComment} type="primary">
+                      Comentar
+                      </Button>
+                  </Form.Item>
+                  </Form>
+              </Col>
+              </Row>
+          </div>
+          {comments.length > 0 ? (
+              <List
+              className="custom-comment-list"
+              itemLayout="horizontal"
+              dataSource={comments}
+              renderItem={comment => (
+                  <List.Item className="custom-comment-item" key={comment.id}>
+                  <List.Item.Meta
+                      avatar={getPlaceholderAvatar(comment.user, comment.guestName)}
+                      title={<Text strong className="custom-comment-author">{comment.user ? comment.user.name : comment.guestName || 'Anônimo'}</Text>}
+                      description={
+                      <>
+                          <Paragraph className="custom-comment-content" style={{whiteSpace: 'pre-line'}}>{comment.content}</Paragraph>
+                          <Text type="secondary" className="custom-comment-datetime">
+                          {new Date(comment.createdAt).toLocaleDateString('pt-BR')} às {new Date(comment.createdAt).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}
+                          </Text>
+                      </>
+                      }
+                  />
+                  </List.Item>
+              )}
+              />
+          ) : (
+              <Text type="secondary" style={{display: 'block', textAlign: 'center', marginTop: '20px'}}>
+                  Nenhum comentário ainda. Seja o primeiro a comentar!
+              </Text>
+          )}
         </div>
+        {/* --- FIM DA SEÇÃO DE COMENTÁRIOS --- */}
 
-        {comments.length > 0 ? (
-            <List
-            className="custom-comment-list"
-            itemLayout="horizontal"
-            dataSource={comments} // DataSource agora vem do estado 'comments'
-            renderItem={comment => ( // Renomeado 'item' para 'comment' para clareza
-                <List.Item className="custom-comment-item" key={comment.id}>
-                <List.Item.Meta
-                    avatar={getPlaceholderAvatar(comment.user, comment.guestName)}
-                    title={<Text strong className="custom-comment-author">{comment.user ? comment.user.name : comment.guestName || 'Anônimo'}</Text>}
-                    description={
-                    <>
-                        <Paragraph className="custom-comment-content" style={{whiteSpace: 'pre-line'}}>{comment.content}</Paragraph>
-                        <Text type="secondary" className="custom-comment-datetime">
-                        {new Date(comment.createdAt).toLocaleDateString('pt-BR')} às {new Date(comment.createdAt).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}
-                        </Text>
-                    </>
-                    }
-                />
-                </List.Item>
-            )}
-            />
-        ) : (
-            <Text type="secondary" style={{display: 'block', textAlign: 'center', marginTop: '20px'}}>
-                Nenhum comentário ainda. Seja o primeiro a comentar!
-            </Text>
-        )}
-        </div>
       </div>
+
+      <ReadingToolsPanel 
+        fontSize={fontSize}
+        readingTheme={readingTheme}
+        increaseFontSize={increaseFontSize}
+        decreaseFontSize={decreaseFontSize}
+        changeTheme={changeTheme}
+      />
     </Content>
   );
 };

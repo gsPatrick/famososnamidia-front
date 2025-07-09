@@ -1,14 +1,13 @@
 // src/pages/Home/HomePage.jsx
 import React, { useState, useEffect } from 'react';
-import { Layout, Row, Col, Card, Typography, Spin, Pagination, Tag, Divider, Alert } from 'antd';
+import { Layout, Row, Col, Typography, Spin, Pagination, Tag, Divider, Alert, List } from 'antd';
 import { ClockCircleOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import { get } from '../../services/api'; // <<< IMPORTAR 'get' DA API
+import { get } from '../../services/api'; 
 import './Home.css';
 
 const { Content } = Layout;
 const { Title, Paragraph, Text } = Typography;
-const { Meta } = Card;
 
 const HomePage = () => {
   const [posts, setPosts] = useState([]);
@@ -16,27 +15,22 @@ const HomePage = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
-  const postsPerPage = 6; // Ou pegar do backend se ele retornar 'limit'
+  const postsPerPage = 6;
 
   useEffect(() => {
     const fetchPosts = async () => {
       setLoading(true);
       setError(null);
       try {
-        // O backend espera 'page' e 'limit'.
-        // O status 'published' é o padrão para esta rota no backend.
         const params = {
           page: currentPage,
           limit: postsPerPage,
-          sortBy: 'publishedAt', // Ordenar pelos mais recentes publicados
+          sortBy: 'publishedAt',
           sortOrder: 'DESC',
         };
         const response = await get('/posts', params);
-        // console.log('Posts da API:', response);
-        // A API retorna { totalItems, posts, totalPages, currentPage }
         setPosts(response.posts || []);
         setTotalItems(response.totalItems || 0);
-        // Poderíamos usar response.currentPage para setar currentPage se quiséssemos que o backend ditasse.
       } catch (err) {
         console.error("Erro ao buscar posts:", err);
         setError(err.message || "Não foi possível carregar os posts. Tente novamente mais tarde.");
@@ -46,13 +40,23 @@ const HomePage = () => {
     };
 
     fetchPosts();
-    window.scrollTo(0, 0); // Rola para o topo ao mudar de página/carregar
-  }, [currentPage]); // Re-executa quando currentPage muda
+    window.scrollTo(0, 0);
+  }, [currentPage]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    // O useEffect cuidará de buscar os posts para a nova página
   };
+
+  const paginationComponent = (
+    <Pagination
+      className="home-pagination"
+      current={currentPage}
+      total={totalItems}
+      pageSize={postsPerPage}
+      onChange={handlePageChange}
+      showSizeChanger={false}
+    />
+  );
 
   if (loading) {
     return (
@@ -83,66 +87,72 @@ const HomePage = () => {
 
       {posts.length > 0 ? (
         <>
-          <Row gutter={[24, 24]}>
-            {posts.map((post) => (
-              <Col key={post.id} xs={24} sm={12} md={8}>
-                {/* Link para o post usa o slug se disponível, senão o ID */}
-                <Link to={`/post/${post.slug || post.id}`} className="post-card-link">
-                  <Card
-                    className="post-card"
-                    hoverable
-                    cover={
-                      <img
-                        alt={post.title}
-                        src={post.imageUrl || "https://placehold.co/600x400/E0E0E0/BDBDBD.png?text=Sem+Imagem"} // Fallback image
-                        className="post-card-image"
-                        onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/600x400/E0E0E0/BDBDBD.png?text=Erro+Img"; }}
-                      />
-                    }
-                    actions={[
-                      post.category ? (
-                        <Link
-                          to={`/categoria/${post.category.slug}`} // Link para slug da categoria
-                          key={`cat-link-${post.id}`}
-                          onClick={(e) => e.stopPropagation()}
-                          className="action-category-link"
-                        >
-                          <Tag color="blue" style={{ cursor: 'pointer' }}>
-                            {post.category.name} {/* Nome da categoria */}
-                          </Tag>
-                        </Link>
-                      ) : (
-                        <Tag key={`cat-none-${post.id}`}>Sem Categoria</Tag>
-                      ),
-                      <Text type="secondary" key={`date-${post.id}`}>
-                        <ClockCircleOutlined /> {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : new Date(post.createdAt).toLocaleDateString()}
-                      </Text>,
-                    ]}
-                  >
-                    <Meta
-                      title={<Title level={4} className="post-card-title" title={post.title}>{post.title}</Title>}
-                      description={
-                        <Paragraph className="post-card-excerpt" ellipsis={{ rows: 3, expandable: false }}>
+          {/* Paginação no TOPO */}
+          {totalItems > postsPerPage && paginationComponent}
+
+          <List
+            itemLayout="vertical"
+            size="large"
+            className="posts-list-container"
+            dataSource={posts}
+            renderItem={(post) => (
+              <List.Item
+                key={post.id}
+                className="horizontal-post-list-item"
+              >
+                <Link to={`/post/${post.slug || post.id}`} className="post-list-item-link">
+                  <Row gutter={[24, 20]} align="top"> {/* Aumentado o gutter para mais espaço */}
+                    {/* Coluna da Imagem */}
+                    <Col xs={24} sm={8} md={7} lg={6}>
+                      <div className="horizontal-post-image-wrapper">
+                        <img
+                          alt={post.title}
+                          src={post.imageUrl || "https://placehold.co/800x450/EAEAEA/BDBDBD.png?text=Sem+Imagem"}
+                          className="horizontal-post-image"
+                          loading="lazy"
+                          onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/800x450/EAEAEA/BDBDBD.png?text=Erro+Img"; }}
+                        />
+                      </div>
+                    </Col>
+
+                    {/* Coluna do Conteúdo */}
+                    <Col xs={24} sm={16} md={17} lg={18}>
+                      <div className="horizontal-post-content">
+                        {post.category ? (
+                          <Link
+                            to={`/categoria/${post.category.slug}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="horizontal-post-category-link"
+                          >
+                            <Tag color="blue" className="horizontal-post-category-tag">
+                              {post.category.name}
+                            </Tag>
+                          </Link>
+                        ) : (
+                          <Tag className="horizontal-post-category-tag">Sem Categoria</Tag>
+                        )}
+                        
+                        <Title level={3} className="horizontal-post-title" title={post.title}>
+                          {post.title}
+                        </Title>
+                        
+                        <Paragraph className="horizontal-post-excerpt" ellipsis={{ rows: 3, expandable: false }}> {/* Aumentado para 3 linhas */}
                           {post.excerpt}
                         </Paragraph>
-                      }
-                    />
-                  </Card>
-                </Link>
-              </Col>
-            ))}
-          </Row>
 
-          {totalItems > postsPerPage && (
-            <Pagination
-              className="home-pagination"
-              current={currentPage}
-              total={totalItems}
-              pageSize={postsPerPage}
-              onChange={handlePageChange}
-              showSizeChanger={false}
-            />
-          )}
+                        <Text type="secondary" className="horizontal-post-meta">
+                          <ClockCircleOutlined /> {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : new Date(post.createdAt).toLocaleDateString()}
+                        </Text>
+                      </div>
+                    </Col>
+                  </Row>
+                </Link>
+              </List.Item>
+            )}
+          />
+          
+          {/* Paginação EMBAIXO */}
+          {totalItems > postsPerPage && paginationComponent}
         </>
       ) : (
         <Text style={{ textAlign: 'center', display: 'block', marginTop: '30px' }}>

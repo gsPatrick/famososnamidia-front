@@ -1,0 +1,145 @@
+/* src/pages/AuthorPage/AuthorPage.css */
+
+.author-page-content {
+  padding: 30px 50px;
+  background-color: #f9f9f9;
+  min-height: calc(100vh - 64px - 70px);
+}
+
+.page-breadcrumb {
+  margin-bottom: 24px;
+}
+
+/* --- Seção de Cabeçalho do Perfil --- */
+.author-profile-header {
+  background-color: #ffffff;
+  padding: 32px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e8e8e8;
+}
+
+.author-profile-avatar {
+  border: 4px solid #ffffff;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.author-profile-name {
+  margin-top: 0 !important;
+  margin-bottom: 8px !important;
+  color: #222;
+  font-weight: 700 !important;
+}
+
+.author-profile-bio {
+  font-size: 1.05em;
+  color: #555;
+  line-height: 1.7;
+  margin-bottom: 16px !important;
+}
+
+.author-profile-link {
+  font-weight: 500;
+}
+
+.author-posts-title {
+  text-align: center;
+  margin-bottom: 30px !important;
+  color: #333;
+}
+
+/* --- Reutilização dos estilos de lista de posts --- */
+/* (Copiado de Home.css para ser autossuficiente) */
+.posts-list-container {
+  margin-block: 30px;
+}
+.posts-list-container .ant-list-item {
+  padding: 0;
+  border-bottom: none;
+}
+.horizontal-post-list-item {
+  margin-bottom: 24px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.horizontal-post-list-item:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  border-color: #d0d0d0;
+}
+.post-list-item-link {
+  display: block;
+  padding: 20px;
+  color: inherit;
+  text-decoration: none;
+}
+.horizontal-post-image-wrapper {
+  width: 100%;
+  background-color: #f0f0f0;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 16 / 9;
+}
+.horizontal-post-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.horizontal-post-list-item:hover .horizontal-post-image {
+  transform: scale(1.05);
+}
+.horizontal-post-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.horizontal-post-category-tag {
+  margin-bottom: 12px !important;
+  display: inline-block;
+}
+.horizontal-post-title {
+  margin-top: 0 !important;
+  margin-bottom: 12px !important;
+  font-size: 1.4em !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+  color: #222;
+}
+.horizontal-post-excerpt {
+  color: #666;
+  font-size: 0.95em;
+  line-height: 1.6;
+  margin-bottom: 16px !important;
+  flex-grow: 1;
+}
+.horizontal-post-meta {
+  font-size: 0.85em;
+  margin-top: auto;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .author-page-content {
+    padding: 20px;
+  }
+  .author-profile-header {
+    text-align: center;
+  }
+}
+@media (max-width: 576px) {
+  .author-page-content {
+    padding: 15px;
+  }
+  .author-profile-header {
+    padding: 24px 16px;
+  }
+  .author-profile-name {
+    font-size: 1.8em !important;
+  }
+}

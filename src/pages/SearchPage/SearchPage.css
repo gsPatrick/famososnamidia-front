@@ -39,7 +39,6 @@
     text-align: center;
   }
   
-  /* Reutilizando estilos de card (idealmente de um CSS global ou importado) */
   .search-page-content .post-card-link {
     text-decoration: none;
     color: inherit;
@@ -59,11 +58,22 @@
     transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   }
-  .search-result-card-image {
-    height: 180px;
-    object-fit: cover;
-    width: 100%;
+
+  /* <<< CORREÇÃO APLICADA AQUI >>> */
+  .search-result-card .ant-card-cover {
+    overflow: hidden;
+    position: relative;
+    aspect-ratio: 16 / 9; /* Força um formato fixo */
   }
+
+  .search-result-card-image {
+    width: 100%;
+    height: 100%; /* Força a imagem a preencher o wrapper */
+    object-fit: cover; /* Garante que a imagem cubra a área */
+    /* object-position será definido dinamicamente via style inline */
+  }
+  /* <<< FIM DA CORREÇÃO >>> */
+
   .search-result-card .ant-card-body {
     padding: 20px;
     flex-grow: 1;
@@ -73,7 +83,6 @@
     font-size: 1.1em !important;
     line-height: 1.4 !important;
     color: #222;
-    /* Para garantir que o ellipsis funcione com Tooltip */
     display: block;
     white-space: nowrap;
     overflow: hidden;

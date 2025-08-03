@@ -3,7 +3,7 @@
 // Hardcode os valores aqui se você não pode usar .env para import.meta.env
 const APP_CONFIG = {
   // URL base para as chamadas de API (ex: /auth, /posts)
-  API_URL: 'https://geral-famosonamidiaapi.r954jc.easypanel.host/api/v1',
+  API_URL: 'https://geral-famososonamidiaapi.r954jc.easypanel.host/api/v1',
 
   // URL base para construir os links completos das imagens
   // Esta é a variável que você usará no lugar de import.meta.env.VITE_API_BASE_URL_FOR_IMAGES

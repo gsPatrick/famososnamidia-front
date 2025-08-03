@@ -116,6 +116,33 @@
 
 .dashboard-page-content .ql-editor {
   min-height: 200px;
+  line-height: 1.6;
+}
+
+/* Preserva formatação de código e espaçamento */
+.dashboard-page-content .ql-editor pre {
+  white-space: pre-wrap;
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #e8e8e8;
+}
+
+.dashboard-page-content .ql-editor code {
+  background-color: #f5f5f5;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+}
+
+/* Melhora a aparência de listas */
+.dashboard-page-content .ql-editor ul, 
+.dashboard-page-content .ql-editor ol {
+  padding-left: 1.5em;
+}
+
+.dashboard-page-content .ql-editor li {
+  margin-bottom: 0.5em;
 }
 
 .focal-point-selector {

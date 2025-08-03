@@ -87,7 +87,6 @@ const HomePage = () => {
 
       {posts.length > 0 ? (
         <>
-          {/* Paginação no TOPO */}
           {totalItems > postsPerPage && paginationComponent}
 
           <List
@@ -101,8 +100,7 @@ const HomePage = () => {
                 className="horizontal-post-list-item"
               >
                 <Link to={`/post/${post.slug || post.id}`} className="post-list-item-link">
-                  <Row gutter={[24, 20]} align="top"> {/* Aumentado o gutter para mais espaço */}
-                    {/* Coluna da Imagem */}
+                  <Row gutter={[24, 20]} align="top">
                     <Col xs={24} sm={8} md={7} lg={6}>
                       <div className="horizontal-post-image-wrapper">
                         <img
@@ -110,12 +108,13 @@ const HomePage = () => {
                           src={post.imageUrl || "https://placehold.co/800x450/EAEAEA/BDBDBD.png?text=Sem+Imagem"}
                           className="horizontal-post-image"
                           loading="lazy"
+                          // <<< CORREÇÃO CRÍTICA AQUI >>>
+                          style={{ objectPosition: `${parseFloat(post.focalPointX) || 50}% ${parseFloat(post.focalPointY) || 50}%` }}
                           onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/800x450/EAEAEA/BDBDBD.png?text=Erro+Img"; }}
                         />
                       </div>
                     </Col>
 
-                    {/* Coluna do Conteúdo */}
                     <Col xs={24} sm={16} md={17} lg={18}>
                       <div className="horizontal-post-content">
                         {post.category ? (
@@ -136,7 +135,7 @@ const HomePage = () => {
                           {post.title}
                         </Title>
                         
-                        <Paragraph className="horizontal-post-excerpt" ellipsis={{ rows: 3, expandable: false }}> {/* Aumentado para 3 linhas */}
+                        <Paragraph className="horizontal-post-excerpt" ellipsis={{ rows: 3, expandable: false }}>
                           {post.excerpt}
                         </Paragraph>
 
@@ -151,7 +150,6 @@ const HomePage = () => {
             )}
           />
           
-          {/* Paginação EMBAIXO */}
           {totalItems > postsPerPage && paginationComponent}
         </>
       ) : (

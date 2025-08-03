@@ -122,6 +122,9 @@ const SearchPage = () => {
                           alt={post.title}
                           src={post.imageUrl || "https://placehold.co/600x400/E0E0E0/BDBDBD.png?text=Sem+Imagem"}
                           className="search-result-card-image"
+                          style={{ 
+                            objectPosition: `${post.focalPointX || 50}% ${post.focalPointY || 50}%` 
+                          }}
                           onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/600x400/E0E0E0/BDBDBD.png?text=Erro+Img"; }}
                         />
                       }

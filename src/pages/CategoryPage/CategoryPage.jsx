@@ -140,6 +140,8 @@ const CategoryPage = () => {
                         src={post.imageUrl || "https://placehold.co/800x450/EAEAEA/BDBDBD.png?text=Sem+Imagem"}
                         className="horizontal-post-image"
                         loading="lazy"
+                        // <<< CORREÇÃO CRÍTICA AQUI >>>
+                        style={{ objectPosition: `${parseFloat(post.focalPointX) || 50}% ${parseFloat(post.focalPointY) || 50}%` }}
                         onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/800x450/EAEAEA/BDBDBD.png?text=Erro+Img"; }}
                       />
                     </div>

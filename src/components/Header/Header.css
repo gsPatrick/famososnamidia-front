@@ -1,345 +1,100 @@
 /* src/components/Header/Header.css */
 
-/* --- Estilos Globais do Header --- */
-.app-header.modern-header {
-  background-color: #ffffff;
-  padding: 0 24px;
-  border-bottom: 1px solid #f0f0f0;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  width: 100%;
-  height: 64px;
-  transition: box-shadow 0.3s ease;
+/* --- Variáveis de Tema (INTOCADO) --- */
+:root {
+  --header-bg: #ffffff;
+  --header-border: #f0f0f0;
+  --header-shadow: rgba(0, 21, 41, 0.08);
+  --header-text: #434343;
+  --header-text-hover: #1890ff;
+  --header-logo-color: #141414;
+  --header-item-hover-bg: #f5f5f5;
+  --header-item-selected-bg: #e6f7ff;
+  --header-item-selected-text: #096dd9;
+  --drawer-bg: #ffffff;
+  --dropdown-bg: #ffffff;
 }
 
-.header-content-row {
-  height: 100%;
-  max-width: 1300px;
-  margin: 0 auto;
+body.theme-sepia { --header-bg: #fbf0d9; --header-border: #d7c9a9; --header-text: #5B4636; --header-text-hover: #795548; --header-logo-color: #4a382b; --header-item-hover-bg: #f8e8c8; --header-item-selected-bg: #f8e8c8; --header-item-selected-text: #4E342E; --drawer-bg: #fbf0d9; --dropdown-bg: #fbf0d9; }
+body.theme-slate { --header-bg: #2d3748; --header-border: #4a5568; --header-text: #e2e8f0; --header-text-hover: #90cdf4; --header-logo-color: #ffffff; --header-item-hover-bg: #4a5568; --header-item-selected-bg: #1a202c; --header-item-selected-text: #90cdf4; --drawer-bg: #2d3748; --dropdown-bg: #2d3748; }
+body.theme-midnight { --header-bg: #1a1a1a; --header-border: #333333; --header-text: #e0e0e0; --header-text-hover: #84ffff; --header-logo-color: #ffffff; --header-item-hover-bg: #333333; --header-item-selected-bg: #000000; --header-item-selected-text: #00e5ff; --drawer-bg: #1a1a1a; --dropdown-bg: #1a1a1a; }
+body.theme-high-contrast { --header-bg: #000000; --header-border: #ffffff; --header-text: #ffffff; --header-text-hover: #ffff00; --header-logo-color: #ffff00; --header-item-hover-bg: #000000; --header-item-selected-bg: #000000; --header-item-selected-text: #ffff00; --drawer-bg: #000000; --dropdown-bg: #000000; }
+
+/* --- Estrutura Geral --- */
+.app-header {
+  background-color: var(--header-bg);
+  border-bottom: 1px solid var(--header-border);
+  box-shadow: 0 1px 4px var(--header-shadow);
+  position: sticky; top: 0; z-index: 1000; height: 64px;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-/* --- Logo --- */
-.logo.modern-logo {
-  font-size: 1.6em;
-  font-weight: 700;
-  line-height: 64px;
-  margin-left: 10px;
-  white-space: nowrap;
-}
-.logo.modern-logo a { /* Estilo para o Link do logo */
-  color: #262626;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-.logo.modern-logo a:hover {
-  color: #1890ff; /* Azul Antd no hover */
+.header-content {
+  max-width: 1400px; margin: 0 auto; height: 100%; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
 }
 
+.header-left, .header-right { display: flex; align-items: center; gap: 16px; }
+.header-center { flex: 1; display: flex; justify-content: center; padding: 0 24px; }
+.header-search { max-width: 500px; width: 100%; }
 
-/* --- Barra de Pesquisa --- */
-.header-search {
-  width: 250px;
-  vertical-align: middle;
-}
-.header-search .ant-input {
-  border-radius: 18px 0 0 18px;
-  border-right: none;
-}
-.header-search .ant-input-search-button {
-  border-radius: 0 18px 18px 0 !important;
-  border-left-color: transparent !important;
-  box-shadow: none !important;
-}
+/* --- Logo & Menu Desktop --- */
+.logo a { color: var(--header-logo-color); font-size: 1.6em; font-weight: 700; text-decoration: none; transition: color 0.3s ease; white-space: nowrap; }
+.logo a:hover { color: var(--header-text-hover); }
 
-/* --- Menu Desktop --- */
-.header-center {
-  display: flex;
-  justify-content: center;
-  overflow: hidden;
+.desktop-menu { background: transparent; border: none; line-height: 62px; }
+.desktop-menu .ant-menu-item, .desktop-menu .category-dropdown-trigger {
+  color: var(--header-text); font-weight: 500; padding: 0 12px !important; margin: 0 4px !important; border-radius: 6px;
+  transition: all 0.3s ease; top: 0 !important; display: inline-flex; align-items: center;
+}
+.desktop-menu > .ant-menu-item::after { display: none !important; }
+.desktop-menu .ant-menu-item:hover, .desktop-menu .category-dropdown-trigger:hover {
+  color: var(--header-text-hover); background-color: var(--header-item-hover-bg);
+}
+.desktop-menu .ant-menu-item-selected {
+  color: var(--header-item-selected-text) !important; background-color: var(--header-item-selected-bg) !important; font-weight: 600;
 }
 
-.header-menu.modern-menu {
-  background: transparent;
-  border-bottom: none;
-  line-height: 62px; /* Ajusta para alinhar bem com 64px de altura do header */
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
+/* --- Dropdown de Categoria --- */
+.category-dropdown-trigger .anticon-down { margin-left: 6px; font-size: 0.8em; }
+.category-dropdown-overlay .ant-dropdown-menu { background-color: var(--dropdown-bg) !important; border: 1px solid var(--header-border) !important; }
+.category-dropdown-overlay .ant-dropdown-menu-item, .category-dropdown-overlay .ant-dropdown-menu-item a { color: var(--header-text) !important; }
+.category-dropdown-overlay .ant-dropdown-menu-item:hover { background-color: var(--header-item-hover-bg) !important; }
+.category-dropdown-overlay .ant-dropdown-menu-item:hover a { color: var(--header-text-hover) !important; }
 
-/* Estilo Base dos Itens do Menu (Desktop) */
-.modern-header .modern-menu .ant-menu-item,
-.modern-header .modern-menu .ant-menu-submenu-title,
-.modern-header .modern-menu .category-dropdown-trigger { /* Inclui o trigger do dropdown */
-  color: #595959;
-  font-weight: 500;
-  margin: 0 5px;
-  padding: 0 15px !important;
-  border-radius: 6px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  top: 0 !important;
-  display: inline-flex; /* Para alinhar ícone com texto no dropdown trigger */
-  align-items: center;
-}
-.modern-header .modern-menu .category-dropdown-trigger .anticon-down {
-    margin-left: 6px; /* Espaço para o ícone de seta */
-    font-size: 0.8em; /* Ícone um pouco menor */
-}
-
-
-/* Remove a linha indicadora padrão do Ant Design */
-.modern-header .modern-menu > .ant-menu-item::after,
-.modern-header .modern-menu > .ant-menu-submenu::after {
-  display: none !important;
-  border-bottom: none !important;
-}
-
-/* Efeito "Flutuar" (Hover) - Fundo sutil */
-.modern-header .modern-menu .ant-menu-item:hover,
-.modern-header .modern-menu .ant-menu-submenu-title:hover,
-.modern-header .modern-menu .category-dropdown-trigger:hover { /* Inclui o trigger do dropdown */
-  color: #000000;
-  background-color: #f5f5f5;
-}
-
-/* Estilo Item Ativo/Selecionado (Desktop) */
-.modern-header .modern-menu .ant-menu-item-selected,
-.modern-header .modern-menu .ant-menu-item-selected .category-dropdown-trigger { /* Garante que o trigger também pareça ativo */
-  color: #000000 !important;
-  background-color: #eeeeee !important;
-  font-weight: 600;
-}
-/* Se o dropdown estiver aberto e o item "Categorias" estiver selecionado */
-.modern-header .modern-menu .ant-menu-item-selected.ant-dropdown-open .category-dropdown-trigger {
-    background-color: #e6f7ff !important; /* Cor de fundo quando dropdown está aberto (opcional) */
-}
-
-
-/* Estilização do Overlay/Popup do Dropdown de Categorias */
-.category-dropdown-overlay .ant-dropdown-menu {
-  border-radius: 6px;
-  box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08),
-              0 3px 6px -4px rgba(0, 0, 0, 0.12),
-              0 9px 28px 8px rgba(0, 0, 0, 0.05);
-  padding: 4px 0; /* Padding interno do menu dropdown */
-}
-.category-dropdown-overlay .ant-dropdown-menu-item {
-  padding: 8px 12px; /* Padding para os itens do dropdown */
-  border-radius: 4px;
-  margin: 2px 4px; /* Pequena margem entre os itens */
-}
-.category-dropdown-overlay .ant-dropdown-menu-item a {
-  color: #333;
-  text-decoration: none;
-}
-.category-dropdown-overlay .ant-dropdown-menu-item:hover {
-  background-color: #f0f5ff; /* Azul bem claro no hover */
-  color: #1890ff; /* Azul Antd no hover */
-}
-.category-dropdown-overlay .ant-dropdown-menu-item:hover a {
-  color: #1890ff;
-}
-
+/* --- Ações do Usuário --- */
+.user-avatar { cursor: pointer; }
 
 /* --- Botão Hamburguer (Mobile) --- */
 .menu-toggle-button {
-  display: none;
-  font-size: 20px;
-  color: #262626;
-  margin-right: 10px;
-}
-.menu-toggle-button:hover {
-    background-color: #f0f0f0 !important;
+  display: none; font-size: 20px; color: var(--header-logo-color);
 }
 
 /* --- Drawer (Menu Mobile) --- */
-.mobile-drawer .ant-drawer-title a.drawer-title-link { /* Estilo para o título do Drawer como link */
-    color: inherit; /* Herda a cor padrão do título */
-    text-decoration: none;
-}
-.mobile-drawer .ant-drawer-title a.drawer-title-link:hover {
-    color: #1890ff; /* Azul no hover */
-}
-
-
-.mobile-drawer .drawer-logo {
-  padding: 16px 24px;
-  font-size: 1.4em;
-  font-weight: 700;
-  border-bottom: 1px solid #f0f0f0;
-}
-.mobile-drawer .drawer-logo a {
-  color: #262626;
-  text-decoration: none;
-}
-.mobile-drawer .drawer-search {
-  padding: 16px 24px;
-  border-bottom: 1px solid #f0f0f0;
-}
-.mobile-drawer .drawer-search .ant-input-search-button {
-     border-radius: 0 6px 6px 0 !important;
-}
-.mobile-drawer .drawer-search .ant-input {
-     border-radius: 6px 0 0 6px;
-}
-
-.mobile-drawer .drawer-menu.ant-menu {
-  border-right: none;
-}
-
-.mobile-drawer .drawer-menu .ant-menu-item,
-.mobile-drawer .drawer-menu .ant-menu-submenu-title { /* Inclui o título do submenu de categorias */
-  margin: 4px 0;
-  width: calc(100% - 16px);
-  margin-left: 8px;
-  border-radius: 6px;
-}
-.mobile-drawer .drawer-menu .ant-menu-item-selected,
-.mobile-drawer .drawer-menu .ant-menu-submenu-selected .ant-menu-submenu-title { /* Submenu ativo */
-    background-color: #e6f7ff !important;
-    color: #1890ff !important;
-    font-weight: 600;
-}
-.mobile-drawer .drawer-menu .ant-menu-item-selected a,
-.mobile-drawer .drawer-menu .ant-menu-submenu-selected .ant-menu-submenu-title a {
-    color: #1890ff !important;
-}
-/* Estilo para itens dentro do submenu de categorias no Drawer */
-.mobile-drawer .drawer-menu .ant-menu-sub .ant-menu-item {
-    background-color: transparent !important; /* Remove fundo azul do item pai */
-    padding-left: 48px !important; /* Indentação para itens do submenu */
-}
-.mobile-drawer .drawer-menu .ant-menu-sub .ant-menu-item-selected {
-    background-color: #dcf4ff !important; /* Fundo um pouco diferente para item de categoria selecionado */
-}
-
+.mobile-drawer .ant-drawer-content-wrapper { background-color: var(--drawer-bg); }
+.mobile-drawer .ant-drawer-header { background-color: var(--drawer-bg); border-bottom-color: var(--header-border); }
+.mobile-drawer .ant-drawer-title a, .mobile-drawer .ant-drawer-close { color: var(--header-logo-color) !important; font-weight: 700; }
+.drawer-content-wrapper { flex-grow: 1; overflow-y: auto; }
+.drawer-search-wrapper { padding: 16px; border-bottom: 1px solid var(--header-border); }
+.drawer-menu.ant-menu { background: transparent; border: none; }
+.drawer-menu .ant-menu-sub { background-color: transparent !important; }
+.drawer-menu .ant-menu-item a, .drawer-menu .ant-menu-item, .drawer-menu .ant-menu-submenu-title { color: var(--header-text); }
+.drawer-menu .ant-menu-item-selected { background-color: var(--header-item-selected-bg); }
+.drawer-menu .ant-menu-item-selected, .drawer-menu .ant-menu-item-selected a { color: var(--header-item-selected-text) !important; font-weight: 600; }
+.drawer-user-section { padding: 16px; margin-top: auto; border-top: 1px solid var(--header-border); background-color: var(--header-item-hover-bg); text-align: center; }
+.drawer-user-section .ant-typography, .drawer-user-section .ant-btn { color: var(--header-text); }
+.drawer-user-section .ant-space-item { width: 100%; }
 
 /* --- Responsividade --- */
-@media (max-width: 992px) {
-  .app-header.modern-header { padding: 0 16px; }
-  .header-search { width: 200px; }
-  .modern-header .modern-menu .ant-menu-item,
-  .modern-header .modern-menu .ant-menu-submenu-title,
-  .modern-header .modern-menu .category-dropdown-trigger {
-    padding: 0 10px !important;
-    margin: 0 2px;
-  }
-  .logo.modern-logo { font-size: 1.4em; }
+@media (max-width: 1024px) {
+  .header-content { padding: 0 16px; }
+  .header-right .desktop-menu { display: none; } /* Oculta o menu principal primeiro */
+  .header-center { padding: 0 16px; }
 }
 
 @media (max-width: 768px) {
-   .header-left { flex: 1; display: flex; align-items: center; }
-  .header-center { display: none; }
-  .menu-toggle-button { display: inline-block; }
-  .logo.modern-logo { margin-left: 5px; font-size: 1.3em; }
-  .header-search { width: 150px; }
-  .header-content-row { justify-content: space-between; }
-}
-
-@media (max-width: 480px) {
-   .app-header.modern-header { padding: 0 12px; }
-   .logo.modern-logo { font-size: 1.2em; }
-   .header-search { width: 120px; }
-}
-
-
-/* src/components/Header/Header.css */
-
-/* ... (estilos anteriores do header-menu, logo, etc. mantidos) ... */
-
-/* --- Seção Direita Combinada (User Actions & Search) --- */
-.header-right-combined {
-  display: flex;
-  align-items: center;
-}
-
-.user-actions-and-search {
-  /* O Space do AntD já cuida do espaçamento interno */
-}
-
-/* Estilos para os botões de login/cadastro/logout no header */
-.user-greeting-text {
-  color: #595959;
-  margin-right: 8px !important; /* Adiciona um pouco de margem ao lado do texto de saudação */
-  white-space: nowrap;
-}
-
-.login-button-header,
-.register-button-header,
-.dashboard-button-header,
-.logout-button-header {
-  padding-left: 12px !important; /* Mais padding para botões com ícone */
-  padding-right: 12px !important;
-}
-
-/* Ajuste para botão de logout (ícone apenas em telas menores talvez) */
-.logout-button-header .anticon + span {
-  /* margin-left: 6px; */ /* Espaço entre ícone e texto (se houver) */
-}
-
-.header-search-standalone {
-  width: 200px; /* Ajuste a largura conforme necessário */
-  vertical-align: middle;
-}
-.header-search-standalone .ant-input {
-  border-radius: 18px 0 0 18px;
-  border-right: none;
-}
-.header-search-standalone .ant-input-search-button {
-  border-radius: 0 18px 18px 0 !important;
-  border-left-color: transparent !important;
-  box-shadow: none !important;
-}
-
-
-/* --- Responsividade para a nova seção direita --- */
-@media (max-width: 992px) {
-  .header-search-standalone { width: 180px; }
-  .user-greeting-text { display: none; } /* Esconde saudação em telas menores para economizar espaço */
-  .login-button-header, .register-button-header, .dashboard-button-header {
-    /* Pode-se optar por mostrar só o ícone */
-    /* padding: 0 8px !important; */
-  }
-  .login-button-header span, .register-button-header span, .dashboard-button-header span {
-    /* display: none; */ /* Se quiser só ícone */
-  }
-  .logout-button-header .anticon + span {
-     /* display: none; */ /* Mostra só o ícone de logout */
-  }
-}
-
-@media (max-width: 768px) {
-  .header-left { flex: 1; display: flex; align-items: center; }
-  .header-center { display: none; } /* Menu desktop some */
-  .header-right-combined {
-    /* No mobile, a busca e user actions podem ir para o drawer,
-       ou a busca pode ficar menor e as user actions somem do header principal */
-    /* Para manter simples, vamos esconder as user actions e manter a busca */
-  }
-  .user-actions-and-search .ant-space-item:not(:last-child) { /* Esconde botões de login/user */
-    display: none;
-  }
-  .header-search-standalone {
-    width: 150px;
-  }
-  /* O menu-toggle-button já está configurado para aparecer */
-}
-
-@media (max-width: 480px) {
-   .app-header.modern-header { padding: 0 12px; }
-   .logo.modern-logo { font-size: 1.2em; }
-   .header-search-standalone { width: 100%; max-width: 120px; }
-   /* Se a busca ficar muito pequena, talvez movê-la apenas para o drawer */
-}
-
-/* ... (estilos do drawer e outros mantidos) ... */
-
-/* Ajuste para o botão de logout no Drawer para ter cor */
-.mobile-drawer .drawer-menu .ant-menu-item button[type="text"] {
-    color: #ff4d4f; /* Cor vermelha para logout */
-}
-.mobile-drawer .drawer-menu .ant-menu-item button[type="text"]:hover {
-    background-color: rgba(255, 77, 79, 0.1);
+  .header-center { display: none; } /* Oculta a busca */
+  .header-right { display: none; } /* Oculta as ações do usuário */
+  .menu-toggle-button { display: inline-flex; } /* Mostra o botão hamburguer */
+  .logo a { font-size: 1.4em; }
 }

@@ -3,13 +3,13 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Layout, Typography, Button, Space, Modal, Form, Input, Select, message, Popconfirm,
   Breadcrumb, Divider, Row, Col, Card, Empty, Tooltip, Table, Spin, Alert,
-  Pagination, Upload
+  Pagination, Upload, Switch, Tag
 } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   PlusOutlined, EditOutlined, DeleteOutlined, HomeOutlined, DashboardOutlined, EyeOutlined,
   TagsOutlined, ReloadOutlined, UsergroupAddOutlined, MailOutlined, LockOutlined, UserOutlined as AntUserOutlined,
-  UploadOutlined, AimOutlined
+  UploadOutlined, AimOutlined, ArrowUpOutlined, ArrowDownOutlined, MenuOutlined
 } from '@ant-design/icons';
 import { get, post, put, del } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
@@ -84,6 +84,8 @@ const DashboardPage = () => {
   const [postForm] = Form.useForm();
   const [postFileList, setPostFileList] = useState([]);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [reorderMode, setReorderMode] = useState(false);
+  const [sortBy, setSortBy] = useState('publishedAt');
 
   // Estados para Categorias
   const [managedCategories, setManagedCategories] = useState([]);
@@ -115,13 +117,19 @@ const DashboardPage = () => {
   const fetchPosts = useCallback(async () => {
     setLoadingPosts(true); setErrorPosts(null);
     try {
-      const params = { page: currentPostsPage, limit: POSTS_PER_PAGE, status: 'all', sortBy: 'createdAt', sortOrder: 'DESC' };
+      const params = { 
+        page: currentPostsPage, 
+        limit: POSTS_PER_PAGE, 
+        status: 'all', 
+        sortBy: reorderMode ? 'custom' : sortBy, 
+        sortOrder: 'DESC' 
+      };
       const response = await get('/posts', params);
       setPosts(response.posts || []);
       setTotalPosts(response.totalItems || 0);
     } catch (err) { setErrorPosts(err.message || "Erro ao carregar posts."); console.error("Erro Dashboard/fetchPosts:", err); }
     finally { setLoadingPosts(false); }
-  }, [currentPostsPage]);
+  }, [currentPostsPage, reorderMode, sortBy]);
 
   const fetchUsers = useCallback(async () => {
     if (!isAdmin) { setLoadingUsers(false); setUsers([]); return; }
@@ -175,7 +183,10 @@ const DashboardPage = () => {
   const showAddPostModal = () => { setEditingPost(null); postForm.resetFields(); postForm.setFieldsValue({ status: 'draft', content: '', focalPointX: 50, focalPointY: 50 }); setPostFileList([]); setIsPostModalVisible(true); };
   const showEditPostModal = (postToEdit) => {
     setEditingPost(postToEdit);
-    postForm.setFieldsValue({ 
+    
+    // Aguarda um pouco para garantir que o modal seja renderizado antes de definir os valores
+    setTimeout(() => {
+      postForm.setFieldsValue({ 
         title: postToEdit.title, 
         excerpt: postToEdit.excerpt, 
         content: postToEdit.content || '', 
@@ -184,8 +195,14 @@ const DashboardPage = () => {
         imageUrl: postToEdit.imageUrl,
         focalPointX: postToEdit.focalPointX || 50,
         focalPointY: postToEdit.focalPointY || 50
-    });
-    if (postToEdit.imageUrl) { setPostFileList([{ uid: '-1', name: 'image.png', status: 'done', url: postToEdit.imageUrl }]); } else { setPostFileList([]); }
+      });
+    }, 100);
+    
+    if (postToEdit.imageUrl) { 
+      setPostFileList([{ uid: '-1', name: 'image.png', status: 'done', url: postToEdit.imageUrl }]); 
+    } else { 
+      setPostFileList([]); 
+    }
     setIsPostModalVisible(true);
   };
   const handleDeletePost = async (postId) => { try { await del(`/posts/${postId}`); message.success('Post excluído!'); fetchPosts(); } catch (error) { message.error(error.message || 'Erro ao excluir.'); }};
@@ -213,8 +230,91 @@ const DashboardPage = () => {
   };
   const handlePostModalCancel = () => { setIsPostModalVisible(false); setPostFileList([]); };
   
-  const quillModules = { toolbar: [ [{ 'header': [1, 2, 3, false] }], ['bold', 'italic', 'underline', 'strike', 'blockquote'], [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}], ['link', 'image'], ['clean'] ]};
-  const quillFormats = [ 'header', 'bold', 'italic', 'underline', 'strike', 'blockquote', 'list', 'bullet', 'indent', 'link', 'image' ];
+  // Funções para reordenação de posts
+  const movePostUp = async (postIndex) => {
+    if (postIndex === 0) return;
+    
+    try {
+      const currentPost = posts[postIndex];
+      const previousPost = posts[postIndex - 1];
+      
+      // Troca as posições
+      const newPosts = [...posts];
+      [newPosts[postIndex], newPosts[postIndex - 1]] = [newPosts[postIndex - 1], newPosts[postIndex]];
+      setPosts(newPosts);
+      
+      // Atualiza no backend
+      await put(`/posts/reorder/batch`, {
+        postOrders: [
+          { id: currentPost.id, sortOrder: postIndex },
+          { id: previousPost.id, sortOrder: postIndex + 1 }
+        ]
+      });
+      
+      message.success('Post movido para cima!');
+    } catch (error) {
+      message.error('Erro ao reordenar posts.');
+      fetchPosts(); // Recarrega em caso de erro
+    }
+  };
+  
+  const movePostDown = async (postIndex) => {
+    if (postIndex === posts.length - 1) return;
+    
+    try {
+      const currentPost = posts[postIndex];
+      const nextPost = posts[postIndex + 1];
+      
+      // Troca as posições
+      const newPosts = [...posts];
+      [newPosts[postIndex], newPosts[postIndex + 1]] = [newPosts[postIndex + 1], newPosts[postIndex]];
+      setPosts(newPosts);
+      
+      // Atualiza no backend
+      await put(`/posts/reorder/batch`, {
+        postOrders: [
+          { id: currentPost.id, sortOrder: postIndex + 2 },
+          { id: nextPost.id, sortOrder: postIndex + 1 }
+        ]
+      });
+      
+      message.success('Post movido para baixo!');
+    } catch (error) {
+      message.error('Erro ao reordenar posts.');
+      fetchPosts(); // Recarrega em caso de erro
+    }
+  };
+  
+  const toggleReorderMode = () => {
+    setReorderMode(!reorderMode);
+    if (!reorderMode) {
+      setSortBy('custom');
+      setCurrentPostsPage(1);
+    } else {
+      setSortBy('publishedAt');
+    }
+  };
+  
+  const quillModules = { 
+    toolbar: [ 
+      [{ 'header': [1, 2, 3, false] }], 
+      ['bold', 'italic', 'underline', 'strike'], 
+      ['blockquote', 'code-block'],
+      [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}], 
+      ['link', 'image'],
+      [{ 'align': [] }],
+      [{ 'color': [] }, { 'background': [] }],
+      ['clean'] 
+    ],
+    clipboard: {
+      // Preserva formatação ao colar
+      matchVisual: false,
+    }
+  };
+  const quillFormats = [ 
+    'header', 'bold', 'italic', 'underline', 'strike', 'blockquote', 'code-block',
+    'list', 'bullet', 'indent', 'link', 'image', 'align', 'color', 'background' 
+  ];
 
   const imageUploadProps = {
     name: 'imageFile', listType: 'picture-card', className: 'post-image-uploader', fileList: postFileList, maxCount: 1, action: `${APP_CONFIG.API_URL}/upload/image`, headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}`, },
@@ -224,9 +324,65 @@ const DashboardPage = () => {
   };
 
   const showAddUserModal = () => { setEditingUser(null); userForm.resetFields(); userForm.setFieldsValue({ role: 'user' }); setIsUserModalVisible(true); };
-  const showEditUserModal = (userToEdit) => { setEditingUser(userToEdit); userForm.setFieldsValue({ name: userToEdit.name, email: userToEdit.email, role: userToEdit.role, password: '', confirmPassword: '' }); setIsUserModalVisible(true); };
+  const showEditUserModal = (userToEdit) => { 
+    setEditingUser(userToEdit); 
+    userForm.setFieldsValue({ 
+      name: userToEdit.name, 
+      email: userToEdit.email, 
+      role: userToEdit.role, 
+      profileImageUrl: userToEdit.profileImageUrl,
+      profileUrl: userToEdit.profileUrl,
+      bio: userToEdit.bio,
+      password: '', 
+      confirmPassword: '' 
+    }); 
+    setIsUserModalVisible(true); 
+  };
   const handleDeleteUser = async (userId) => { if (userId === currentUser?.id) { message.error("Não pode excluir a si mesmo."); return; } const userToDelete = users.find(u => u.id === userId); if (userToDelete && userToDelete.role === 'admin' && users.filter(u => u.role === 'admin').length <= 1) { message.warn("Não pode excluir o último admin."); return; } try { await del(`/users/${userId}`); message.success('Usuário excluído!'); fetchUsers(); } catch (error) { message.error(error.message || 'Erro ao excluir.'); }};
-  const handleUserModalOk = async () => { try { const values = await userForm.validateFields(); const payload = { name: values.name, email: values.email, role: values.role }; if (values.password) { if (!editingUser && values.password !== values.confirmPassword) { message.error('Senhas não coincidem!'); return; } if (editingUser && values.password && values.password !== values.confirmPassword) { message.error('Novas senhas não coincidem!'); return; } payload.password = values.password; } if (editingUser) { if (!payload.password && payload.password !== undefined) delete payload.password; await put(`/users/${editingUser.id}`, payload); message.success('Usuário atualizado!'); } else { if (!payload.password) { message.error('Senha obrigatória para novo usuário.'); return; } await post('/users', payload); message.success('Usuário criado!'); } setIsUserModalVisible(false); fetchUsers(); } catch (errorInfo) { if (errorInfo.message) { message.error(errorInfo.message || 'Erro.'); } else { message.error('Verifique os campos.'); }}};
+  const handleUserModalOk = async () => { 
+    try { 
+      const values = await userForm.validateFields(); 
+      const payload = { 
+        name: values.name, 
+        email: values.email, 
+        role: values.role,
+        profileImageUrl: values.profileImageUrl || null,
+        profileUrl: values.profileUrl || null,
+        bio: values.bio || null
+      }; 
+      if (values.password) { 
+        if (!editingUser && values.password !== values.confirmPassword) { 
+          message.error('Senhas não coincidem!'); 
+          return; 
+        } 
+        if (editingUser && values.password && values.password !== values.confirmPassword) { 
+          message.error('Novas senhas não coincidem!'); 
+          return; 
+        } 
+        payload.password = values.password; 
+      } 
+      if (editingUser) { 
+        if (!payload.password && payload.password !== undefined) delete payload.password; 
+        await put(`/users/${editingUser.id}`, payload); 
+        message.success('Usuário atualizado!'); 
+      } else { 
+        if (!payload.password) { 
+          message.error('Senha obrigatória para novo usuário.'); 
+          return; 
+        } 
+        await post('/users', payload); 
+        message.success('Usuário criado!'); 
+      } 
+      setIsUserModalVisible(false); 
+      fetchUsers(); 
+    } catch (errorInfo) { 
+      if (errorInfo.message) { 
+        message.error(errorInfo.message || 'Erro.'); 
+      } else { 
+        message.error('Verifique os campos.'); 
+      }
+    }
+  };
   const handleUserModalCancel = () => setIsUserModalVisible(false);
   const userTableColumns = [ { title: 'Nome', dataIndex: 'name', key: 'name', sorter: (a, b) => a.name.localeCompare(b.name), ellipsis: true }, { title: 'Email', dataIndex: 'email', key: 'email', sorter: (a, b) => a.email.localeCompare(b.email), ellipsis: true }, { title: 'Papel', dataIndex: 'role', key: 'role', width: 120, sorter: (a, b) => a.role.localeCompare(b.role), render: (role) => <Tag color={role === 'admin' ? 'volcano' : role === 'author' ? 'geekblue' : 'green'}>{role?.toUpperCase()}</Tag> }, { title: 'Desde', dataIndex: 'createdAt', key: 'createdAt', width: 120, render: (date) => new Date(date).toLocaleDateString('pt-BR'), sorter: (a,b) => new Date(a.createdAt) - new Date(b.createdAt)}, { title: 'Ações', key: 'actions', width: 120, align: 'center', fixed: 'right', render: (_, record) => ( <Space> <Tooltip title="Editar Usuário"><Button icon={<EditOutlined />} size="small" onClick={() => showEditUserModal(record)} /></Tooltip> <Popconfirm title="Excluir este usuário?" onConfirm={() => handleDeleteUser(record.id)} okText="Sim" cancelText="Não" disabled={record.id === currentUser?.id || (record.role === 'admin' && users.filter(u=>u.role === 'admin').length <=1 && record.id !== currentUser?.id) }> <Tooltip title={record.id === currentUser?.id ? "Não pode excluir a si mesmo" : ((record.role === 'admin' && users.filter(u=>u.role === 'admin').length <=1 && record.id !== currentUser?.id) ? "Não pode excluir o único admin" : "Excluir Usuário")}> <Button danger icon={<DeleteOutlined />} size="small" disabled={record.id === currentUser?.id || (record.role === 'admin' && users.filter(u=>u.role === 'admin').length <=1 && record.id !== currentUser?.id)} /> </Tooltip> </Popconfirm> </Space> ), }, ];
   
@@ -247,18 +403,114 @@ const DashboardPage = () => {
 
       <div className="dashboard-section-header">
         <Title level={3} className="section-main-title"><DashboardOutlined /> Gerenciar Posts</Title>
-        <Space> <Button icon={<ReloadOutlined />} onClick={fetchPosts} loading={loadingPosts}>Atualizar</Button> <Button type="primary" icon={<PlusOutlined />} onClick={showAddPostModal}>Novo Post</Button> </Space>
+        <Space> 
+          <Switch 
+            checked={reorderMode} 
+            onChange={toggleReorderMode}
+            checkedChildren="Reordenar" 
+            unCheckedChildren="Normal"
+          />
+          <Button icon={<ReloadOutlined />} onClick={fetchPosts} loading={loadingPosts}>Atualizar</Button> 
+          <Button type="primary" icon={<PlusOutlined />} onClick={showAddPostModal}>Novo Post</Button> 
+        </Space>
       </div>
+      {reorderMode && (
+        <Alert 
+          message="Modo de Reordenação Ativo" 
+          description="Use os botões de seta para mover os posts para cima ou para baixo. A ordem será salva automaticamente."
+          type="info" 
+          showIcon 
+          style={{ marginBottom: 16 }}
+        />
+      )}
       {loadingPosts ? <div className="section-loading-spinner"><Spin /></div> :
        errorPosts ? <Alert className="section-error-alert" message="Erro ao Carregar Posts" description={errorPosts} type="error" showIcon /> :
        posts.length > 0 ? (
         <>
           <Row gutter={[16, 16]} className="dashboard-posts-grid">
-            {posts.map(p => ( <Col xs={24} sm={12} md={8} lg={6} key={p.id}> <Card className="dashboard-post-card" hoverable cover={
-               <img alt={p.title} src={p.imageUrl ? (p.imageUrl.startsWith('http') ? p.imageUrl : `${CONST_IMAGES_BASE_URL}${p.imageUrl}`) : "https://placehold.co/600x400/E0E0E0/BDBDBD.png?text=Sem+Imagem"} className="dashboard-post-card-image" style={{ objectPosition: `${p.focalPointX || 50}% ${p.focalPointY || 50}%` }} onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/600x400/E0E0E0/BDBDBD.png?text=Erro+Img"; }}/>
-               } actions={[ <Tooltip title="Editar"><Button type="text" icon={<EditOutlined />} key="edit" onClick={() => showEditPostModal(p)} /></Tooltip>, <Popconfirm title="Excluir este post?" onConfirm={() => handleDeletePost(p.id)} okText="Sim" cancelText="Não" key="delete"> <Tooltip title="Excluir"><Button type="text" danger icon={<DeleteOutlined />}/></Tooltip> </Popconfirm>, <Tooltip title="Ver Post"><Link to={`/post/${p.slug || p.id}`} target="_blank" key="view"><Button type="text" icon={<EyeOutlined />}/></Link></Tooltip> ]} > <Meta title={<Tooltip title={p.title} placement="topLeft">{p.title}</Tooltip>} description={ <> <Tag color={p.status === 'published' ? 'success' : p.status === 'draft' ? 'processing' : 'error'}>{p.status?.toUpperCase()}</Tag> <Text type="secondary" style={{ fontSize: '0.8em', display: 'block', margin: '4px 0' }}> {p.category?.name || 'N/A'} - {p.publishedAt ? new Date(p.publishedAt).toLocaleDateString('pt-BR') : new Date(p.createdAt).toLocaleDateString('pt-BR')} </Text> <Paragraph ellipsis={{ rows: 2 }} style={{ marginTop: '8px', fontSize: '0.9em', minHeight: '2.7em' }}> {p.excerpt} </Paragraph> </> } /> </Card> </Col> ))}
+            {posts.map((p, index) => ( 
+              <Col xs={24} sm={12} md={8} lg={6} key={p.id}> 
+                <Card 
+                  className="dashboard-post-card" 
+                  hoverable 
+                  cover={
+                    <img 
+                      alt={p.title} 
+                      src={p.imageUrl ? (p.imageUrl.startsWith('http') ? p.imageUrl : `${CONST_IMAGES_BASE_URL}${p.imageUrl}`) : "https://placehold.co/600x400/E0E0E0/BDBDBD.png?text=Sem+Imagem"} 
+                      className="dashboard-post-card-image" 
+                      style={{ objectPosition: `${p.focalPointX || 50}% ${p.focalPointY || 50}%` }} 
+                      onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/600x400/E0E0E0/BDBDBD.png?text=Erro+Img"; }}
+                    />
+                  } 
+                  actions={reorderMode ? [
+                    <Tooltip title="Mover para cima" key="up">
+                      <Button 
+                        type="text" 
+                        icon={<ArrowUpOutlined />} 
+                        onClick={() => movePostUp(index)}
+                        disabled={index === 0}
+                      />
+                    </Tooltip>,
+                    <Tooltip title="Posição" key="position">
+                      <Button type="text" icon={<MenuOutlined />} disabled>
+                        {index + 1}
+                      </Button>
+                    </Tooltip>,
+                    <Tooltip title="Mover para baixo" key="down">
+                      <Button 
+                        type="text" 
+                        icon={<ArrowDownOutlined />} 
+                        onClick={() => movePostDown(index)}
+                        disabled={index === posts.length - 1}
+                      />
+                    </Tooltip>
+                  ] : [
+                    <Tooltip title="Editar" key="edit">
+                      <Button type="text" icon={<EditOutlined />} onClick={() => showEditPostModal(p)} />
+                    </Tooltip>, 
+                    <Popconfirm title="Excluir este post?" onConfirm={() => handleDeletePost(p.id)} okText="Sim" cancelText="Não" key="delete"> 
+                      <Tooltip title="Excluir">
+                        <Button type="text" danger icon={<DeleteOutlined />}/>
+                      </Tooltip> 
+                    </Popconfirm>, 
+                    <Tooltip title="Ver Post" key="view">
+                      <Link to={`/post/${p.slug || p.id}`} target="_blank">
+                        <Button type="text" icon={<EyeOutlined />}/>
+                      </Link>
+                    </Tooltip> 
+                  ]} 
+                > 
+                  <Meta 
+                    title={<Tooltip title={p.title} placement="topLeft">{p.title}</Tooltip>} 
+                    description={ 
+                      <> 
+                        <Tag color={p.status === 'published' ? 'success' : p.status === 'draft' ? 'processing' : 'error'}>
+                          {p.status?.toUpperCase()}
+                        </Tag> 
+                        <Text type="secondary" style={{ fontSize: '0.8em', display: 'block', margin: '4px 0' }}> 
+                          {p.category?.name || 'N/A'} - {p.publishedAt ? new Date(p.publishedAt).toLocaleDateString('pt-BR') : new Date(p.createdAt).toLocaleDateString('pt-BR')} 
+                        </Text> 
+                        <Paragraph ellipsis={{ rows: 2 }} style={{ marginTop: '8px', fontSize: '0.9em', minHeight: '2.7em' }}> 
+                          {p.excerpt} 
+                        </Paragraph> 
+                      </> 
+                    } 
+                  /> 
+                </Card> 
+              </Col> 
+            ))}
           </Row>
-          {totalPosts > POSTS_PER_PAGE && ( <Pagination current={currentPostsPage} total={totalPosts} pageSize={POSTS_PER_PAGE} onChange={handlePostsPageChange} className="dashboard-entity-pagination" showSizeChanger={false} showTotal={(total, range) => `${range[0]}-${range[1]} de ${total} posts`} /> )}
+          {!reorderMode && totalPosts > POSTS_PER_PAGE && ( 
+            <Pagination 
+              current={currentPostsPage} 
+              total={totalPosts} 
+              pageSize={POSTS_PER_PAGE} 
+              onChange={handlePostsPageChange} 
+              className="dashboard-entity-pagination" 
+              showSizeChanger={false} 
+              showTotal={(total, range) => `${range[0]}-${range[1]} de ${total} posts`} 
+            /> 
+          )}
         </>
       ) : ( <Empty description="Nenhum post encontrado. Crie o primeiro!" style={{marginTop: '30px'}}/> )}
       <Divider/>
@@ -302,7 +554,14 @@ const DashboardPage = () => {
             <Input.TextArea rows={3} />
           </Form.Item>
           <Form.Item name="content" label="Conteúdo Completo" rules={[{ required: true, validator: async (_, value) => { if (!value || value === '<p><br></p>' || value.replace(/<[^>]+>/g, '').trim() === '') return Promise.reject(new Error('Conteúdo é obrigatório!')); return Promise.resolve(); }}]}>
-            <ReactQuill theme="snow" modules={quillModules} formats={quillFormats} style={{ backgroundColor: 'white' }} />
+            <ReactQuill 
+              theme="snow" 
+              modules={quillModules} 
+              formats={quillFormats} 
+              style={{ backgroundColor: 'white' }}
+              preserveWhitespace={true}
+              placeholder="Digite o conteúdo do post aqui..."
+            />
           </Form.Item>
           <Row gutter={16}>
             <Col xs={24} md={12}>
@@ -354,6 +613,16 @@ const DashboardPage = () => {
                       <Input.Password prefix={<LockOutlined />} placeholder="Confirme a senha" />
                   </Form.Item>
                 )}
+                <Divider>Informações de Perfil</Divider>
+                <Form.Item name="profileImageUrl" label="URL da Foto de Perfil" rules={[{ type: 'url', message: 'Insira uma URL válida!' }]}>
+                    <Input placeholder="https://exemplo.com/foto.jpg" />
+                </Form.Item>
+                <Form.Item name="profileUrl" label="URL do Perfil/Site Pessoal" rules={[{ type: 'url', message: 'Insira uma URL válida!' }]}>
+                    <Input placeholder="https://meusite.com" />
+                </Form.Item>
+                <Form.Item name="bio" label="Biografia" rules={[{ max: 500, message: 'A biografia deve ter no máximo 500 caracteres.' }]}>
+                    <Input.TextArea rows={3} placeholder="Breve descrição sobre o usuário..." showCount maxLength={500} />
+                </Form.Item>
             </Form>
         </Modal>
       )}

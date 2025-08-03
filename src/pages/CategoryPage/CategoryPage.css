@@ -46,7 +46,7 @@
     min-height: 300px;
   }
 
-/* --- ESTILOS DE LISTA HORIZONTAL --- */
+/* --- ESTILOS DE LISTA HORIZONTAL CORRIGIDO --- */
 .category-page-content .posts-list-container {
   margin-block: 30px;
 }
@@ -72,19 +72,27 @@
   color: inherit;
   text-decoration: none;
 }
+
+/* <<< CORREÇÃO APLICADA AQUI >>> */
 .category-page-content .horizontal-post-image-wrapper {
   width: 100%;
   background-color: #f0f0f0;
   border-radius: 6px;
   overflow: hidden;
+  position: relative;
+  aspect-ratio: 16 / 9; /* Força um formato fixo (ex: widescreen) */
 }
+
 .category-page-content .horizontal-post-image {
   width: 100%;
-  height: auto;
-  max-height: 250px;
+  height: 100%; /* Força a imagem a preencher o wrapper */
   display: block;
+  object-fit: cover; /* Garante que a imagem cubra a área, cortando se necessário */
   transition: transform 0.4s ease;
+  /* object-position será aplicado via style inline pelo React */
 }
+/* <<< FIM DA CORREÇÃO >>> */
+
 .category-page-content .horizontal-post-list-item:hover .horizontal-post-image {
   transform: scale(1.05);
 }
@@ -149,9 +157,7 @@
   .category-page-content {
     padding: 15px 15px;
   }
-  .category-page-content .horizontal-post-image {
-    max-height: 200px;
-  }
+  /* Em telas pequenas, a imagem já não tem max-height, o aspect-ratio cuida disso */
   .category-page-content .post-list-item-link {
     padding: 15px;
   }

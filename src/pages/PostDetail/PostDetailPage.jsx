@@ -50,7 +50,7 @@ const ReadingProgressBar = () => {
 
 // Componente para o Painel de Ferramentas
 const ReadingToolsPanel = ({ fontSize, readingTheme, increaseFontSize, decreaseFontSize, changeTheme }) => {
-    const fontSizePercentage = Math.round(((fontSize - 14) / (24 - 14)) * 100); // 14px=0%, 24px=100%
+    const fontSizePercentage = Math.round(((fontSize - 14) / (24 - 14)) * 100);
 
     return (
         <div className="reading-tools-panel">
@@ -86,9 +86,8 @@ const PostDetailPage = () => {
   const [commentForm] = Form.useForm();
   const navigate = useNavigate();
 
-  // Estados para as ferramentas de leitura
-  const [fontSize, setFontSize] = useState(18); // Tamanho inicial em pixels
-  const [readingTheme, setReadingTheme] = useState('light'); // 'light', 'sepia', 'dark'
+  const [fontSize, setFontSize] = useState(18);
+  const [readingTheme, setReadingTheme] = useState('light');
 
   useEffect(() => {
     const fetchPostDetails = async () => {
@@ -168,7 +167,6 @@ const PostDetailPage = () => {
 
     } catch (error) {
         message.error(error.message || 'Falha ao adicionar comentário.');
-        console.error("Erro ao submeter comentário:", error);
     } finally {
         setSubmittingComment(false);
     }
@@ -252,7 +250,31 @@ const PostDetailPage = () => {
         <Row justify="space-between" align="middle" className="post-meta-and-share" gutter={[0, 16]}>
             <Col xs={24} md={16} className="post-meta">
             <Row gutter={[16, 8]} align="middle" wrap={true}>
-                {postData.author && <Col> <Text type="secondary" className="meta-item"><UserOutlined /> {postData.author.name}</Text> </Col>}
+                {postData.author && (
+                  <Col>
+                    <Space align="center" className="author-info">
+                      {postData.author.profileImageUrl && (
+                        <img 
+                          src={postData.author.profileImageUrl} 
+                          alt={postData.author.name}
+                          className="author-avatar"
+                          style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }}
+                          onError={(e) => { e.target.style.display = 'none'; }}
+                        />
+                      )}
+                      <Text type="secondary" className="meta-item">
+                        <UserOutlined /> 
+                        {postData.author.profileUrl ? (
+                          <a href={postData.author.profileUrl} target="_blank" rel="noopener noreferrer">
+                            {postData.author.name}
+                          </a>
+                        ) : (
+                          postData.author.name
+                        )}
+                      </Text>
+                    </Space>
+                  </Col>
+                )}
                 <Col> <Text type="secondary" className="meta-item"><ClockCircleOutlined /> {postData.publishedAt ? new Date(postData.publishedAt).toLocaleDateString('pt-BR', { year: 'numeric', month: 'long', day: 'numeric' }) : new Date(postData.createdAt).toLocaleDateString('pt-BR')}</Text> </Col>
                 {postData.category && <Col> <Tag icon={<FolderOpenOutlined />} color="processing" className="meta-item category-tag"><Link to={`/categoria/${postData.category.slug}`}>{postData.category.name}</Link></Tag> </Col>}
             </Row>
@@ -269,14 +291,64 @@ const PostDetailPage = () => {
             </Col>
         </Row>
         <Divider />
-        {postData.imageUrl && <Image src={postData.imageUrl} alt={postData.title} className="post-featured-image" preview={false} onError={(e) => { e.target.style.display='none'; }} />}
+        {postData.imageUrl && (
+          <Image 
+            src={postData.imageUrl} 
+            alt={postData.title} 
+            className="post-featured-image" 
+            preview={false} 
+            // <<< CORREÇÃO CRÍTICA AQUI >>>
+            style={{ 
+              objectPosition: `${parseFloat(postData.focalPointX) || 50}% ${parseFloat(postData.focalPointY) || 50}%` 
+            }}
+            onError={(e) => { e.target.style.display='none'; }} 
+          />
+        )}
         
         <div className="post-body-wrapper" style={{ fontSize: `${fontSize}px` }}>
           <div className="post-body" dangerouslySetInnerHTML={{ __html: postData.content }} />
         </div>
+        
+        {postData.author && (postData.author.bio || postData.author.profileImageUrl) && (
+          <>
+            <Divider />
+            <div className="author-bio-section">
+              <Title level={4}>Sobre o Autor</Title>
+              <Row gutter={16} align="top">
+                {postData.author.profileImageUrl && (
+                  <Col flex="none">
+                    <img 
+                      src={postData.author.profileImageUrl} 
+                      alt={postData.author.name}
+                      className="author-bio-avatar"
+                      style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover' }}
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                  </Col>
+                )}
+                <Col flex="auto">
+                  <Title level={5} style={{ marginBottom: 8 }}>
+                    {postData.author.profileUrl ? (
+                      <a href={postData.author.profileUrl} target="_blank" rel="noopener noreferrer">
+                        {postData.author.name}
+                      </a>
+                    ) : (
+                      postData.author.name
+                    )}
+                  </Title>
+                  {postData.author.bio && (
+                    <Paragraph style={{ marginBottom: 0 }}>
+                      {postData.author.bio}
+                    </Paragraph>
+                  )}
+                </Col>
+              </Row>
+            </div>
+          </>
+        )}
+        
         <Divider />
 
-        {/* --- INÍCIO DA SEÇÃO DE COMENTÁRIOS (CÓDIGO COMPLETO) --- */}
         <div className="comment-section custom-comment-section">
           <Title level={3} className="comment-section-title">
               <MessageOutlined /> {comments.length} Comentário(s)
@@ -331,7 +403,6 @@ const PostDetailPage = () => {
               </Text>
           )}
         </div>
-        {/* --- FIM DA SEÇÃO DE COMENTÁRIOS --- */}
 
       </div>
 

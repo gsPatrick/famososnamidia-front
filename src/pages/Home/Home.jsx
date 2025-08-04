@@ -25,8 +25,9 @@ const HomePage = () => {
         const params = {
           page: currentPage,
           limit: postsPerPage,
-          sortBy: 'publishedAt',
-          sortOrder: 'DESC',
+          // <<< MUDANÇA PRINCIPAL AQUI >>>
+          sortBy: 'custom',
+          sortOrder: 'ASC', // A ordem personalizada é geralmente ascendente (1, 2, 3...)
         };
         const response = await get('/posts', params);
         setPosts(response.posts || []);
@@ -108,7 +109,6 @@ const HomePage = () => {
                           src={post.imageUrl || "https://placehold.co/800x450/EAEAEA/BDBDBD.png?text=Sem+Imagem"}
                           className="horizontal-post-image"
                           loading="lazy"
-                          // <<< CORREÇÃO CRÍTICA AQUI >>>
                           style={{ objectPosition: `${parseFloat(post.focalPointX) || 50}% ${parseFloat(post.focalPointY) || 50}%` }}
                           onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/800x450/EAEAEA/BDBDBD.png?text=Erro+Img"; }}
                         />

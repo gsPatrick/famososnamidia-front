@@ -367,7 +367,13 @@ const PostDetailPage = () => {
                 </Link>
               </Col>
             )}
-            <Col><Text className="meta-item"><ClockCircleOutlined /> {new Date(postData.publishedAt).toLocaleDateString('pt-BR', { month: 'long', day: 'numeric', year: 'numeric' })}</Text></Col>
+            <Col>
+              <Text className="meta-item">
+                <ClockCircleOutlined /> 
+                {/* <<< CORREÇÃO APLICADA AQUI >>> */}
+                {new Date(postData.publishedAt || postData.createdAt).toLocaleDateString('pt-BR', { month: 'long', day: 'numeric', year: 'numeric' })}
+              </Text>
+            </Col>
           </Row>
         </div>
       </header>
